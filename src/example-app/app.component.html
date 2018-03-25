@@ -1,0 +1,271 @@
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="display-4">@localization/l10n</h1>
+                <p l10n="header.title.description"></p>
+                <a href="https://github.com/pIvan/l10n" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">GitHub</a>
+            </div>
+            <div class="w-100"><br></div>
+            <div class="col col-md-6 col-sm-12">
+                <p l10n="header.selection.title"></p>
+                <select #select class="form-control col-sm-12" (change)="languangeChange( select.value )">
+                    <option 
+                        *ngFor="let lang of languages" 
+                        [selected]="lang.code === language" 
+                        [value]="lang.code">{{ lang.language }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- directive examples -->
+<div class="container">
+
+    <div class="card">
+        <div class="card-header" [innerHTML]="'demo.title' | l10n"></div>
+        <div class="card-block">
+            <p>dictionary content:</p>
+            <pre>{{ dictionary | json }}</pre>
+        </div>
+    </div>
+    <br>
+
+    <div class="card">
+        <div class="card-header">Description</div>
+        <div class="card-block">
+            <p>Pure Angular 2+ localization (l10n) library.</p>
+            <ul>
+                <li>It's an Angular functional set (pipe, directive, service) used to localize application</li>
+                <li>Compatible with Angular 2+ versions</li>
+                <li>No external dependency</li>
+                <li>Supported some of the most used localization files: .properties, .po, .json</li>
+                <li>load localization file/s when you need it</li>
+                <li>easily manage localization storage</li>
+                <li>customizable localization loader</li>
+            </ul>
+        </div>
+    </div>
+    <br>
+
+    <div class="card">
+        <div class="card-header">Getting started</div>
+        <div class="card-block">
+            <ol>
+                <li>Fork and clone this repo</li>
+                <li>npm install</li>
+                <li>Open a terminal and type "npm run start"</li>
+            </ol>
+            <p style="padding:0 0 0 40px"><b>or</b></p>
+            <ol>
+                <li>npm install @localization/l10n --save</li>
+                <li>ng serve --open</li>
+            </ol>
+        </div>
+    </div>
+    <br>
+
+    <div class="card">
+        <div class="card-header">Installation</div>
+        <div class="card-block">
+            <p>To install this component to an external project, follow the procedure:</p>
+            <ol>
+                <li><code>npm install @localization/l10n --save</code></li>
+                <li><pre class="prettify">import &#123; L10nModule, L10nService &#125; from '@localization/l10n';
+...
+...
+
+
+@Injectable()
+export class LocalizationResolve implements Resolve &#123;
+
+    constructor(private localization: L10nService)&#123;
+        this.localization.language = 'en-US';
+
+        this.localization.languageChanges.subscribe((&#123; code &#125;) => &#123;
+            this.localization.setFromFile(`$&#123;code&#125;.locales.properties`);
+        &#125;)
+    &#125;
+
+    public resolve(): Observable|Promise &#123;
+        return this.localization.setFromFile(`$&#123;this.localization.languageCode&#125;.locales.properties`);
+    &#125;
+&#125;
+
+
+
+@NgModule(&#123;
+    imports: [
+        BrowserModule,
+        L10nModule.forRoot(),
+        RouterModule.forRoot([
+            &#123; path: '', component: AppComponent, resolve: &#123; localization: LocalizationResolve &#125;&#125;
+        ])
+    ],
+    providers: [LocalizationResolve],
+    bootstrap: [AppComponent]
+&#125;)
+export class AppModule &#123;&#125;</pre>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <br>
+
+    <div class="card">
+        <div class="card-header">Configuration</div>
+        <div class="card-block">
+            <p>By default, if you want to load .properties, .po or .json files you don't need to configure anything.<br>
+            But depending on your needs, you can write your own loader, parser or storage provider</p>
+            <pre class="prettify">
+import &#123; 
+    IL10nLoaderResponse, 
+    IL10nFileRequest, 
+    L10nBaseLoader,
+    L10nBaseStorage,
+    L10nBaseParser,
+    LanguageCodes
+&#125; from '@localization/l10n';
+                    
+
+@Injectable()
+export class CustomLoader extends L10nBaseLoader &#123;
+
+    constructor( private http: HttpClient )&#123;
+        super();
+    &#125;
+
+    public getFile(&#123; url, code &#125;: IL10nFileRequest ): Observable&lt;IL10nLoaderResponse&gt; &#123;
+        let subject = new Subject&lt;IL10nLoaderResponse&gt;();
+        let fileType = this.getFileExtension( url );                           
+
+        ...
+        return subject.asObservable();
+    &#125;
+&#125;
+
+
+@Injectable()
+export class CustomStorage extends L10nBaseStorage &#123;
+
+    public getSentance( key: string ): string &#123;
+        return this._dictionary[key];
+    &#125;
+
+    public setSentence( key: string, sentence: string ): void &#123;
+        this._dictionary[ key ] = sentence;
+    &#125;
+&#125;
+
+
+@Injectable()
+export class CustomParser extends L10nBaseParser &#123;
+    public parse( response: any, fileType: string ): Observable<&#123; key: string; sentence: string &#125;> &#123;&#125;
+&#125;
+
+
+@NgModule(&#123;
+    imports: [
+        BrowserModule,
+        L10nModule.forRoot(&#123; 
+            loader: CustomLoader, 
+            storage: CustomStorage, 
+            parser: CustomParser, 
+            config: &#123; defaultLanguage: LanguageCodes.EnglishUnitedStates &#125; 
+        &#125;)
+    ],
+    providers: [CustomLoader, CustomStorage, CustomParser],
+    bootstrap: [AppComponent]
+&#125;)
+export class AppModule &#123;&#125;
+            </pre>
+        </div>
+    </div>
+    <br>
+
+    <div class="card">
+        <div class="card-header">Define the translations</div>
+        <div class="card-block" ngNonBindable>
+            <p>Once you've configurated L10n module, you can put your translations to file/s or use existing one.</p>
+            <p>.properties</p>
+            <pre class="prettify">app.hello.key = Hello $&#123;value&#125;</pre>
+            <p>.po</p>
+            <pre class="prettify">msgid "app.hello.key"
+msgstr "Hello $&#123;value&#125;"</pre>
+            <p>.json</p>
+            <pre class="prettify">&#123;
+"app.hello.key": "Hello $&#123;value&#125;"
+&#125;</pre>
+
+<p>default defined interpolations are <b>{{ }}</b> or <b>&#123; &#125;</b> or <b>$&#123; &#125;</b>.</p>
+<pre class="prettify">
+Hello $&#123;value&#125;  =>  L10nService.get('app.hello.key', &#123;value: "world"&#125;)  =>  Hello world
+Hello $&#123;0&#125;      =>  L10nService.get('app.hello.key', ["world"])         =>  Hello world<br>
+Hello &#123;value&#125;   =>  L10nService.get('app.hello.key', &#123;value: "world"&#125;)  => Hello world
+Hello &#123;0&#125;       =>  L10nService.get('app.hello.key', ["world"])         => Hello world<br>
+Hello &#123;&#123;value&#125;&#125; =>  L10nService.get('app.hello.key', &#123;value: "world"&#125;)  =>  Hello world
+Hello &#123;&#123;0&#125;&#125;     =>  L10nService.get('app.hello.key', ["world"])         =>  Hello world</pre>
+
+        <p>Also it is possible to change default interpolations with something custom</p>
+        <pre class="prettify">L10nService.setInterpolation(&#123; start: '[[', end: ']]' &#125;);</pre>
+        <pre class="prettify">app.hello.key = Hello [[value]]</pre>
+        <p>possible is to use other key from dictionary as value</p>
+        <pre class="prettify">app.world.key = world
+app.hello.key = Hello $&#123;app.world.key&#125;
+
+L10nService.get('app.hello.key')  =>  Hello world</pre>
+        </div>
+    </div>
+    <br>
+
+    <div class="card">
+        <div class="card-header">Add values to dictionary</div>
+        <div class="card-block">
+            <p>when setting up a dictionary it is possible to use two built-in methods, <b>setFromObject</b> or <b>setFromFile</b></p>
+            <pre class="prettify">L10nService.setFromObject(&#123; 'app.hello.key': 'Hello $&#123;app.hello.world&#125;', 'app.hello.world': 'world' &#125;);</pre>
+            <pre class="prettify">L10nService.setFromFile('http://some.url');</pre>
+        </div>
+    </div>
+    <br>
+
+    <div class="card">
+        <div class="card-header">Service</div>
+        <div class="card-block">
+            <p>you can use Ln10 <b>service</b>:</p>
+            <pre class="prettify">let translation = L10nService.get('app.hello.key', &#123; value: 'world' &#125;);
+console.log( translation ); => Hello world</pre>
+        </div>
+    </div>
+    <br>
+
+    <div class="card">
+        <div class="card-header">Directive</div>
+        <div class="card-block">
+            <p>this is how you do it with the <b>directive</b>:</p>
+            <pre class="prettify">&lt;div l10n="app.hello.key" [l10n-args]="params"&gt;&lt;/div&gt;
+&lt;div l10n="app.hello.key" [l10n-args]="&#123;value: 'world'&#125;"&gt;&lt;/div&gt;
+&lt;div l10n="app.hello.key" l10n-args="&#123;value: 'world'&#125;"&gt;&lt;/div&gt;
+
+&lt;div [l10n]="'app.hello.key'" [l10n-args]="params"&gt;&lt;/div&gt;
+&lt;div [l10n]="'app.hello.key'" l10n-args="&#123;value: 'world'&#125;"&gt;&lt;/div&gt;</pre>
+            <p><b>l10n-args</b> can be property in component or inline written JSON</p>
+        </div>
+    </div>
+    <br>
+
+    <div class="card" ngNonBindable>
+        <div class="card-header">Pipe</div>
+        <div class="card-block">
+            <p>also easily you can use the <b>pipe</b></p>
+            <pre class="prettify">&lt;div&gt;&#123;&#123;'app.hello.key' | l10n:param &#125;&#125;&lt;/div&gt;
+&lt;div [innerHTML]="'app.hello.key' | l10n"&gt;&lt;/div&gt;
+&lt;div&gt;&#123;&#123;'app.hello.key' | l10n: &#123;'key': 'value'&#125; &#125;&#125;&lt;/div&gt;</pre>
+            <p><b>param</b> can be property in component or inline written JSON</p>
+        </div>
+    </div>
+    <br>
+
+
+    
+</div>
