@@ -13,7 +13,7 @@ before_install:
 
 before_script:
   - npm install -g @angular/cli
-  - npm install -g @angular-devkit/core
+  - npm i -D @angular-devkit/core
 
 install:
   - npm install
