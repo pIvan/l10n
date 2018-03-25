@@ -10,7 +10,7 @@
 
 # Demo
 
-[Click here for preview](https://github.com/pIvan/l10n/)
+[Click here for preview](https://pivan.github.io/l10n/)
 
 
 # Description
