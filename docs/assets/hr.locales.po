@@ -1,0 +1,29 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: TODO List\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: (reference)
+# or #@ or #. (comment)
+#, fuzzy (fuzzy flag)
+#msgctxt
+#msgid
+#msgid_plural
+#msgstr
+
+
+#. Please don't change the name of the application
+#: /app/modules/views
+msgid "l10n.key"
+msgstr "Hello ${value}"
+
+
+msgid "button_order"
+msgstr "Order Now"
+ 
+msgid "login_message"
+msgstr "Welcome back!"
