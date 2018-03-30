@@ -11,7 +11,7 @@ import { L10nService } from './services/l10n.service';
 import { L10nLoader, L10nBaseLoader } from './services/l10n-loader.service';
 import { L10nStorage, L10nBaseStorage } from './services/l10n-storage.service';
 import { L10nParser, L10nBaseParser } from './services/l10n-parser.service';
-import { L10nConfig } from './services/l10n-config.service';
+import { L10nConfig, IL10nConfig } from './services/l10n-config.service';
 
 import { L10nDirective } from './directives/l10n.directive';
 import { L10nPipe } from './pipes/l10n.pipe';
@@ -32,10 +32,11 @@ export interface IL10nModuleConfig {
   loader?: any;
   storage?: any;
   parser?: any;
-  config?: L10nConfig;
+  config?: IL10nConfig;
 }
 
 export const LOCALIZATION_L10N_FORROOT_GUARD = new InjectionToken<void>('LOCALIZATION_L10N_FORROOT_GUARD');
+export const LOCALIZATION_L10N_CONFIG = new InjectionToken<void>('LOCALIZATION_L10N_CONFIG');
 
 export function localizationProvideForRootGuard(l10n: L10nService): any {
   if (l10n) {
@@ -47,6 +48,11 @@ export function localizationProvideForRootGuard(l10n: L10nService): any {
 const LOCALIZATION_PROVIDERS = [
   L10nService
 ]
+
+export function configFactory(userConfig: IL10nModuleConfig) {
+  let config = new L10nConfig();
+  return Object.assign(config, userConfig.config);
+}
 
 @NgModule({
   imports: [
@@ -71,6 +77,7 @@ export class L10nModule {
       ngModule: L10nModule,
       providers: [
         LOCALIZATION_PROVIDERS,
+        { provide: LOCALIZATION_L10N_CONFIG, useValue: configuration },
         {
           provide: LOCALIZATION_L10N_FORROOT_GUARD,
           useFactory: localizationProvideForRootGuard,
@@ -79,7 +86,7 @@ export class L10nModule {
         { provide: L10nBaseLoader, useClass: configuration.loader || L10nLoader },
         { provide: L10nBaseStorage, useClass: configuration.storage || L10nStorage },
         { provide: L10nBaseParser, useClass: configuration.parser || L10nParser },
-        { provide: L10nConfig, useValue: configuration.config || {} }
+        { provide: L10nConfig, useFactory: configFactory, deps: [LOCALIZATION_L10N_CONFIG] }
       ]
     }
   }

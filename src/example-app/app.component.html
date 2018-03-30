@@ -81,8 +81,6 @@
 export class LocalizationResolve implements Resolve &#123;
 
     constructor(private localization: L10nService)&#123;
-        this.localization.language = 'en-US';
-
         this.localization.languageChanges.subscribe((&#123; code &#125;) => &#123;
             this.localization.setFromFile(`$&#123;code&#125;.locales.properties`);
         &#125;)
@@ -98,7 +96,7 @@ export class LocalizationResolve implements Resolve &#123;
 @NgModule(&#123;
     imports: [
         BrowserModule,
-        L10nModule.forRoot(),
+        L10nModule.forRoot(&#123; config: &#123;defaultLanguage: LanguageCodes.EnglishUnitedStates&#125; &#125;),
         RouterModule.forRoot([
             &#123; path: '', component: AppComponent, resolve: &#123; localization: LocalizationResolve &#125;&#125;
         ])
@@ -168,11 +166,15 @@ export class CustomParser extends L10nBaseParser &#123;
 @NgModule(&#123;
     imports: [
         BrowserModule,
+        // each config property is optional
         L10nModule.forRoot(&#123; 
             loader: CustomLoader, 
             storage: CustomStorage, 
             parser: CustomParser, 
-            config: &#123; defaultLanguage: LanguageCodes.EnglishUnitedStates &#125; 
+            config: &#123; 
+                defaultLanguage: LanguageCodes.EnglishUnitedStates, 
+                bindingProperty: 'textContent' 
+            &#125; 
         &#125;)
     ],
     providers: [CustomLoader, CustomStorage, CustomParser],
@@ -235,6 +237,9 @@ L10nService.get('app.hello.key')  =>  Hello world</pre>
             <p>you can use Ln10 <b>service</b>:</p>
             <pre class="prettify">let translation = L10nService.get('app.hello.key', &#123; value: 'world' &#125;);
 console.log( translation ); => Hello world</pre>
+            <p>it's possible to observe changes on specific key, an observer will also initially return a translated value</p>
+            <pre class="prettify">let subscription = L10nService.observe('app.hello.key', &#123; value: 'world' &#125;)
+                              .subscribe((sentence) => &#123; console.log( sentence );  &#125;);</pre>
         </div>
     </div>
     <br>
@@ -242,7 +247,8 @@ console.log( translation ); => Hello world</pre>
     <div class="card">
         <div class="card-header">Directive</div>
         <div class="card-block">
-            <p>this is how you do it with the <b>directive</b>:</p>
+            <p><b>directive</b> by default use HTMLElement.textContent as property for translation,<br>
+                and this is how you use it:</p>
             <pre class="prettify">&lt;div l10n="app.hello.key" [l10n-args]="params"&gt;&lt;/div&gt;
 &lt;div l10n="app.hello.key" [l10n-args]="&#123;value: 'world'&#125;"&gt;&lt;/div&gt;
 &lt;div l10n="app.hello.key" l10n-args="&#123;value: 'world'&#125;"&gt;&lt;/div&gt;

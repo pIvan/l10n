@@ -1,6 +1,7 @@
 import { Directive, Input, ElementRef, OnInit, SimpleChanges, OnDestroy, OnChanges, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { L10nService } from './../services/l10n.service';
+import { L10nConfig } from './../services/l10n-config.service';
 import { IL10nArguments } from './../helpers/helpers.class';
 
 /** 
@@ -20,6 +21,7 @@ export class L10nDirective implements OnInit, OnDestroy, OnChanges {
     private subscription: Subscription;
 
     constructor(
+        private _config: L10nConfig,
         private _elementRef: ElementRef,
         private _renderer: Renderer2,
         private _l10n: L10nService) {
@@ -48,6 +50,6 @@ export class L10nDirective implements OnInit, OnDestroy, OnChanges {
     }
 
     public localizeElement(localization: string) {
-        this._renderer.setProperty(this._elementRef.nativeElement, 'textContent', localization);
+        this._renderer.setProperty(this._elementRef.nativeElement, this._config.bindingProperty, localization);
     }
 }
