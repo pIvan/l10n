@@ -3,7 +3,7 @@
   "description": "",
   "homepage": "https://github.com/pIvan/l10n",
   "bugs": "https://github.com/pIvan/l10n/issues",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "./bundles/l10n.umd.js",
   "module": "./esm5/l10n.js",
   "es2015": "./esm2015/l10n.js",
@@ -20,7 +20,12 @@
     "angular 2+",
     "angular 4",
     "angular 5",
-    "NativeScript"
+    "NativeScript",
+    "locale",
+    "language",
+    "translate",
+    "format",
+    "culture"
   ],
   "scripts": {
     "ng": "ng",

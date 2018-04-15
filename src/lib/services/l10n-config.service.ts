@@ -6,7 +6,7 @@ export interface IL10nConfig {
 }
 
 
-export class L10nConfig {
+export class L10nConfig implements IL10nConfig {
     public defaultLanguage: string = null;
     /**
      * used within the directive as a value that will be localized

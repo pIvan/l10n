@@ -20,6 +20,12 @@ export class L10nDirective implements OnInit, OnDestroy, OnChanges {
 
     private subscription: Subscription;
 
+    /**
+     * TODO -> add dot selector
+     * [l10n.propertyName] ili l10n.propertyName
+     * https://github.com/angular/angular/issues/13355
+     * [l10n.title], [l10n.alt], [l10n.innerText], [l10n.textContent]
+     */
     constructor(
         private _config: L10nConfig,
         private _elementRef: ElementRef,

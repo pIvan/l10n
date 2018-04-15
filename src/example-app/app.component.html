@@ -224,9 +224,10 @@ L10nService.get('app.hello.key')  =>  Hello world</pre>
     <div class="card">
         <div class="card-header">Add values to dictionary</div>
         <div class="card-block">
-            <p>when setting up a dictionary it is possible to use two built-in methods, <b>setFromObject</b> or <b>setFromFile</b></p>
+            <p>when setting up a dictionary it is possible to use three built-in methods, <b>setFromObject()</b>, <b>setFromFile()</b> or <b>set()</b></p>
             <pre class="prettify">L10nService.setFromObject(&#123; 'app.hello.key': 'Hello $&#123;app.hello.world&#125;', 'app.hello.world': 'world' &#125;);</pre>
             <pre class="prettify">L10nService.setFromFile('http://some.url');</pre>
+            <pre class="prettify">L10nService.set('app.hello.key', 'Hello world!');</pre>
         </div>
     </div>
     <br>

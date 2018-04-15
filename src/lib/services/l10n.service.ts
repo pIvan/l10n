@@ -1,6 +1,7 @@
 import { Injectable, Inject, Optional } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/map';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { L10nBaseLoader } from './l10n-loader.service';
 import { L10nBaseStorage } from './l10n-storage.service';

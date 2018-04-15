@@ -4,7 +4,6 @@
 
 
 [![npm version](https://badge.fury.io/js/%40localization%2Fl10n.svg)](https://www.npmjs.com/package/@localization/l10n)
-
 [![Build Status](https://travis-ci.org/pIvan/l10n.svg?branch=master)](https://travis-ci.org/pIvan/l10n)
 
 # Demo
