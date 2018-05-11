@@ -16,7 +16,6 @@ import { L10nConfig, IL10nConfig } from './services/l10n-config.service';
 import { L10nDirective } from './directives/l10n.directive';
 import { L10nPipe } from './pipes/l10n.pipe';
 
-
 export { L10nService } from './services/l10n.service';
 export { L10nBaseLoader, IL10nLoaderResponse } from './services/l10n-loader.service';
 export { L10nBaseStorage } from './services/l10n-storage.service';
@@ -35,19 +34,7 @@ export interface IL10nModuleConfig {
   config?: IL10nConfig;
 }
 
-export const LOCALIZATION_L10N_FORROOT_GUARD = new InjectionToken<void>('LOCALIZATION_L10N_FORROOT_GUARD');
 export const LOCALIZATION_L10N_CONFIG = new InjectionToken<void>('LOCALIZATION_L10N_CONFIG');
-
-export function localizationProvideForRootGuard(l10n: L10nService): any {
-  if (l10n) {
-    throw new Error(`L10nModule.forRoot() called twice. Lazy loaded modules should use L10nModule instead.`);
-  }
-  return 'guarded';
-}
-
-const LOCALIZATION_PROVIDERS = [
-  L10nService
-]
 
 export function configFactory(userConfig: IL10nModuleConfig) {
   let config = new L10nConfig();
@@ -69,20 +56,14 @@ export function configFactory(userConfig: IL10nModuleConfig) {
 })
 export class L10nModule {
 
-  constructor(@Optional() @Inject(LOCALIZATION_L10N_FORROOT_GUARD) guard: any, @Optional() l10n: L10nService) {
+  constructor(l10n: L10nService) {
   }
 
   public static forRoot(configuration: IL10nModuleConfig = {}): ModuleWithProviders {
     return {
       ngModule: L10nModule,
       providers: [
-        LOCALIZATION_PROVIDERS,
         { provide: LOCALIZATION_L10N_CONFIG, useValue: configuration },
-        {
-          provide: LOCALIZATION_L10N_FORROOT_GUARD,
-          useFactory: localizationProvideForRootGuard,
-          deps: [[L10nService, new Optional(), new SkipSelf()]]
-        },
         { provide: L10nBaseLoader, useClass: configuration.loader || L10nLoader },
         { provide: L10nBaseStorage, useClass: configuration.storage || L10nStorage },
         { provide: L10nBaseParser, useClass: configuration.parser || L10nParser },

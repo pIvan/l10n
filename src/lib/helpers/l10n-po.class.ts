@@ -1,5 +1,4 @@
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
+import { Observable, Observer } from 'rxjs';
 
 
 // #: (reference)
@@ -20,8 +19,6 @@ export class L10nPo {
 
     /**
      * parse the *.po file into an associative array
-     * @param {String} rawText 
-     * @param {Function} callbackHandler 
      */
     public parse(rawText: string): Observable<{ key: string; sentence: string }> {
         let entries = rawText

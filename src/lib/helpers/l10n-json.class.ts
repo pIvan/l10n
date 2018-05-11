@@ -1,14 +1,10 @@
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
-
+import { Observable, Observer } from 'rxjs';
 
 
 export class L10nJSON {
 
     /**
      * parse the *.json file into an associative array
-     * @param {String} rawText 
-     * @param {Function} callbackHandler 
      */
     public parse(translations: { [key: string]: string } | string): Observable<{ key: string; sentence: string }> {
         if (typeof translations === 'string') {

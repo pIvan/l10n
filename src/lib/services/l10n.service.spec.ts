@@ -1,4 +1,5 @@
 import { TestBed, async, inject, fakeAsync, tick } from '@angular/core/testing';
+import { skip } from 'rxjs/operators';
 
 import { L10nModule, L10nService, LanguageCodes } from '@localization/l10n';
 import { L10nTestLoader, fileMock } from './l10n.service.mock';
@@ -114,7 +115,9 @@ describe('L10n Service', () => {
 
     it('should observe key on each change', (done) => {
         // ship first because it's initial value
-        service.observe( 'localization.test.interpolation.dollarArgument', {variable: '112'}).skip(1).subscribe((newValue) => {
+        service.observe( 'localization.test.interpolation.dollarArgument', {variable: '112'}).pipe(
+            skip(1)
+        ).subscribe((newValue) => {
             expect( newValue ).toEqual("@localization/l10n single brackets with dollar interpolation - 112.");
             done();
         });

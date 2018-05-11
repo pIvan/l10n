@@ -1,5 +1,5 @@
 import { Directive, Input, ElementRef, OnInit, SimpleChanges, OnDestroy, OnChanges, Renderer2 } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { L10nService } from './../services/l10n.service';
 import { L10nConfig } from './../services/l10n-config.service';
 import { IL10nArguments } from './../helpers/helpers.class';

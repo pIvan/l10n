@@ -19,5 +19,9 @@
     "paths": {
       "@localization/l10n": [ "lib/public_api" ]
     }
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "enableIvy": true
   }
 }

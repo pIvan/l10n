@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { L10nService } from './../services/l10n.service';
 import { IsNullOrEmpty } from './../helpers/helpers.class';
 

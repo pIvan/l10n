@@ -1,5 +1,5 @@
 import { L10nBaseLoader, IL10nLoaderResponse, IL10nFileRequest } from '@localization/l10n';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 
 export const fileMock = {

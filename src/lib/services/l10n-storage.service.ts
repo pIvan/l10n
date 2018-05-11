@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IL10nDictionary } from './../helpers/helpers.class';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 
 export abstract class L10nBaseStorage {
@@ -17,7 +17,6 @@ export abstract class L10nBaseStorage {
 
     /**
      * returns dictionray (maped key => value)
-     * @returns {object}
      */
     public get dictionary(): IL10nDictionary {
         return this._dictionary;
@@ -34,7 +33,6 @@ export abstract class L10nBaseStorage {
     /**
      * set ISO Language code
      * eventualy used to map values as [language][key] => sentence
-     * @param {String} language
      */
     public set language(language: string) {
         this._language = language;

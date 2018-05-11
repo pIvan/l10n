@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { IL10nFileRequest, ResponseType, ContentType } from './../helpers/helpers.class';
-import { Observable } from 'rxjs/Rx';
-import { Subject } from 'rxjs/Subject';
+import { Observable, Subject, from } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 
 export interface IL10nLoaderResponse {
@@ -28,13 +28,15 @@ export abstract class L10nBaseLoader {
 
     public setFromFile(params: IL10nFileRequest): Observable<IL10nLoaderResponse> {
         if (this._loadedUrls[params.url]) {
-            return Observable.from([]);
+            return from([]);
         }
 
-        return this.getFile(params).map((response) => {
-            this._loadedUrls[params.url] = true;
-            return response;
-        });
+        return this.getFile(params).pipe(
+            map((response) => {
+                this._loadedUrls[params.url] = true;
+                return response;
+            })
+        );
     }
 
     public abstract getFile(params: IL10nFileRequest): Observable<IL10nLoaderResponse>;
