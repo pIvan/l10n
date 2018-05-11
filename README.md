@@ -109,7 +109,7 @@ Use the following snippet inside your template:
 
 ### Setting up Dev
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.5.5.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.1.
 
 [Angular CLI](https://github.com/angular/angular-cli) must be installed before building L10n project.
 
@@ -132,7 +132,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Tests
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.5.5.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.1.
 
 
 [Angular CLI](https://github.com/angular/angular-cli) must be installed before testing L10n project.
