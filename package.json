@@ -3,7 +3,7 @@
   "description": "",
   "homepage": "https://github.com/pIvan/l10n",
   "bugs": "https://github.com/pIvan/l10n/issues",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "main": "./bundles/l10n.umd.js",
   "module": "./esm5/l10n.js",
   "es2015": "./esm2015/l10n.js",
@@ -39,7 +39,7 @@
     "clean": "rm -rf dist",
     "build:git:demo": "ng build --prod --aot --base-href /l10n/",
     "build:library": "ng-packagr -p ng-package.json && npm run build:git:demo",
-    "build:publish": "npm publish dist/lib --access public"
+    "build:publish": "npm publish dist/lib/ --access public"
   },
   "repository": {
     "type": "git",

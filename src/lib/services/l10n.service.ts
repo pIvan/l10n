@@ -3,6 +3,7 @@ import { Subject, Observable, BehaviorSubject } from 'rxjs';
 import { L10nBaseLoader } from './l10n-loader.service';
 import { L10nBaseStorage } from './l10n-storage.service';
 import { L10nBaseParser } from './l10n-parser.service';
+import { L10nBaseFormatter } from './l10n-formatter.service';
 import { L10nConfig } from './l10n-config.service';
 import {
     IsNullOrEmpty,
@@ -11,11 +12,6 @@ import {
     IL10nArguments
 } from './../helpers/helpers.class';
 
-/**
- * regex used for localization interpolation
- * {{}} | {} | ${}
- */
-const interpolationRegex: RegExp = /\{\{\s*(.+?)\s*\}\}|\{\s*(.+?)\s*\}|\$\{\s*(.+?)\s*\}/g;
 
 @Injectable({
     providedIn: 'root'
@@ -37,12 +33,6 @@ export class L10nService {
      */
     private _observers: { [key: string]: Subject<string> } = {};
 
-    /**
-     * regex used for localization interpolation
-     * {{}} | {} | ${}
-     */
-    private _interpolationRegex: RegExp = interpolationRegex;
-
     private _languageChange: Subject<IL10nLanguage> = new Subject();
 
     private _dictionaryReady: Subject<{}> = new Subject();
@@ -51,6 +41,7 @@ export class L10nService {
         private _loader: L10nBaseLoader,
         private _storage: L10nBaseStorage,
         private _parser: L10nBaseParser,
+        private _formatter: L10nBaseFormatter,
         private _config: L10nConfig) {
         this.initialSettings();
     }
@@ -243,51 +234,7 @@ export class L10nService {
      * {{}} | {} | ${}
      */
     private evaluate(sentence: string, args: IL10nArguments): string {
-        // match, (...interpolates, offset, string)
-        return sentence.replace(this._interpolationRegex, (match, ...interpolates) => {
-            // remove last two elements ( offset, string )
-            interpolates.splice(-2);
-            interpolates = interpolates.filter((val) => val != null);
-
-            // try to find property in provided arguments
-            if (!IsNullOrEmpty(args)) {
-                for (let property of interpolates) {
-                    let value = args[this.trim(property)];
-
-                    if (!IsNullOrEmpty(value)) {
-                        return value;
-                    }
-                }
-            }
-
-            // try to find property in dictionary
-            for (let property of interpolates) {
-                let sentence = this._storage.getSentance(this.trim(property));
-
-                if (!IsNullOrEmpty(sentence)) {
-                    return sentence;
-                }
-            }
-
-
-            if (!IsNullOrEmpty(interpolates)) { this.handleError(`arguments are not defined in the template or dictionary: ${JSON.stringify(interpolates)}`); }
-            return match;
-        });
-    }
-
-    /**
-     * remove white empty spaces from string beginning and end
-     */
-    private trim(property: string | number): string {
-        return (property + '').trim();
-    }
-
-    /**
-     * @description
-     * Overrides the default encapsulation start and end delimiters (respectively `{{` and `}}`)
-     */
-    public setInterpolation({ start, end }: { start: string; end: string; }): void {
-        this._interpolationRegex = new RegExp(`\\${start.split('').join('\\')}\s*(.+?)\s*\\${end.split('').join('\\')}`, 'g');
+        return this._formatter.interpolate(sentence, args);
     }
 
     /**

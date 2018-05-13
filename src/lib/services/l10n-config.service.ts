@@ -1,10 +1,8 @@
 
-
 export interface IL10nConfig {
     defaultLanguage?: string;
     bindingProperty?: string;
 }
-
 
 export class L10nConfig implements IL10nConfig {
     public defaultLanguage: string = null;

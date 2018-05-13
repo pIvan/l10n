@@ -20,7 +20,7 @@ export class AppComponent implements AfterViewInit {
 
   public language: string;
 
-  constructor(private localization: L10nService, private elRef: ElementRef){    
+  constructor(private localization: L10nService, private elRef: ElementRef){
   }
 
   public get dictionary(): IL10nDictionary {

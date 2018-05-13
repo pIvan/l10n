@@ -85,7 +85,6 @@ describe('L10n Service', () => {
 
    it('should insert correct arguments', fakeAsync(() => {
         service.setFromObject( fileMock );
-
         tick();
 
         let dollarArgument = service.get('localization.test.interpolation.dollarArgument', { variable: 1 });
@@ -95,22 +94,12 @@ describe('L10n Service', () => {
         let mixedMultipleArguments = service.get('localization.test.interpolation.mixedMultipleArguments', { variable1: 10, variable2: 20, variable3: 30 });
         let keyAsArgument = service.get('localization.test.key.as.value');
 
-        service.setInterpolation({start: '%', end: '%'});
-        tick();
-        let customInterpolation = service.get('localization.test.interpolation.customInterpolation', {variable:3});
-
-        service.setInterpolation({start: '[[', end: ']]'})
-        let customArrayInterpolation = service.get('localization.test.interpolation.customArrayInterpolation', [12]);
-
         expect(dollarArgument).toEqual('@localization/l10n single brackets with dollar interpolation - 1.');
         expect(singleBracketsArgument).toEqual('@localization/l10n single brackets interpolation - 1.');
         expect(doubleBracketsArgument).toEqual('@localization/l10n double brackets interpolation - 1.');
         expect(arrayArgument).toEqual('@localization/l10n array interpolation - 2.');
         expect(mixedMultipleArguments).toEqual('@localization/l10n 10-20-30');
         expect(keyAsArgument).toEqual('@localization/l10n is the best localization for Angular!');
-
-        expect(customInterpolation).toEqual('@localization/l10n custom interpolation - 3.');
-        expect(customArrayInterpolation).toEqual('@localization/l10n custom array interpolation - 12.');
    }));
 
     it('should observe key on each change', (done) => {
