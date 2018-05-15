@@ -123,6 +123,7 @@ import &#123;
     L10nBaseLoader,
     L10nBaseStorage,
     L10nBaseParser,
+    L10nBaseFormatter,
     LanguageCodes
 &#125; from '@localization/l10n';
                     
@@ -184,7 +185,7 @@ export class CustomFormatter extends L10nBaseFormatter &#123;
             &#125; 
         &#125;)
     ],
-    providers: [CustomLoader, CustomStorage, CustomParser],
+    providers: [CustomLoader, CustomStorage, CustomParser, CustomFormatter],
     bootstrap: [AppComponent]
 &#125;)
 export class AppModule &#123;&#125;

@@ -1,5 +1,6 @@
 import { Injectable, Inject, Optional } from '@angular/core';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators'
 import { L10nBaseLoader } from './l10n-loader.service';
 import { L10nBaseStorage } from './l10n-storage.service';
 import { L10nBaseParser } from './l10n-parser.service';
@@ -31,7 +32,7 @@ export class L10nService {
     /**
      * observers for each key in dictionary
      */
-    private _observers: { [key: string]: Subject<string> } = {};
+    private _observers: { [key: string]: BehaviorSubject<string> } = {};
 
     private _languageChange: Subject<IL10nLanguage> = new Subject();
 
@@ -171,15 +172,14 @@ export class L10nService {
     /**
      * observe key change in dictionary and return translation
      */
-    public observe(key: string, args?: IL10nArguments | string, fallbackString?: string): BehaviorSubject<string> {
+    public observe(key: string, args?: IL10nArguments | string, fallbackString?: string): Observable<string> {
         if (!this._observers[key]) {
-            this._observers[key] = new Subject();
+            this._observers[key] = new BehaviorSubject(key);
         }
 
-        let observed = () => this.fromDictionary(key, args, fallbackString);
-        let observer = new BehaviorSubject(observed());
-        this._observers[key].asObservable().subscribe(() => observer.next(observed()));
-        return observer;
+        return this._observers[key].pipe(
+            map(() => this.fromDictionary(key, args, fallbackString))
+        );
     }
 
     /**
@@ -274,7 +274,7 @@ export class L10nService {
             this._storage.setSentence(key, newVal);
 
             if (this._observers[key]) {
-                this._observers[key].next();
+                this._observers[key].next(key);
             }
         }
     }
@@ -396,7 +396,7 @@ export class L10nService {
      * trigger change on each observer
      */
     private forceChange(): void {
-        Object.keys(this._observers).forEach((key) => this._observers[key].next());
+        Object.keys(this._observers).forEach((key) => this._observers[key].next(key));
     }
 
     /**
