@@ -3,7 +3,7 @@
   "description": "",
   "homepage": "https://github.com/pIvan/l10n",
   "bugs": "https://github.com/pIvan/l10n/issues",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "main": "./bundles/l10n.umd.js",
   "module": "./esm5/l10n.js",
   "es2015": "./esm2015/l10n.js",

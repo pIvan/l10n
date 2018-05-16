@@ -28,24 +28,17 @@ import { IsNullOrEmpty } from './../helpers/helpers.class';
 export class L10nPipe implements PipeTransform, OnDestroy {
 
     private value: string = null;
-    private latestKeyValue: string = null;
+    private latestReturnedValue: string = null;
 
-    private languageSubscription: Subscription;
     private subscription: Subscription;
 
     constructor(
         private _l10n: L10nService,
-        private _ref: ChangeDetectorRef
-    ) {
-        if (!this.languageSubscription) {
-            this.languageSubscription = this._l10n.languageChanges.subscribe(() => this.ngOnDestroy());
-        }
+        private _ref: ChangeDetectorRef) {
     }
 
     public ngOnDestroy(): void {
-        if (this.subscription) {
-            this._dispose();
-        }
+        this._dispose();
     }
 
     public transform(key: string, args: any): string {
@@ -53,25 +46,27 @@ export class L10nPipe implements PipeTransform, OnDestroy {
             return key;
         }
 
-        if (!IsNullOrEmpty(this.value) && this.latestKeyValue === key) {
-            return this.value;
+        if(!this.subscription){
+            this.subscription = this._l10n.observe(key, args).subscribe((sentence) => {
+                this.value = sentence;
+                this._ref.markForCheck();
+            });
         }
 
-        this.subscription = this._l10n.observe(key, args).subscribe((sentence) => {
-            this.value = sentence;
-            this._ref.markForCheck();
-        });
+        if (this.latestReturnedValue === this.value) {
+            return this.latestReturnedValue;
+        }
 
-
-        this.latestKeyValue = key;
-        this.value = this._l10n.get(key, args);
-        return this.value;
+        this.latestReturnedValue = this.value;
+        return this.latestReturnedValue;
     }
 
     private _dispose(): void {
-        this.subscription.unsubscribe();
-        this.subscription = null;
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+            this.subscription = null;
+        }
         this.value = null;
-        this.latestKeyValue = null;
+        this.latestReturnedValue = null;
     }
 }
