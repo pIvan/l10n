@@ -7,7 +7,7 @@ export const fileMock = {
     'localization.test.interpolation.dollarArgument': '@localization/l10n single brackets with dollar interpolation - ${variable}.',
     'localization.test.interpolation.singleBracketsArgument': '@localization/l10n single brackets interpolation - {variable}.',
     'localization.test.interpolation.doubleBracketsArgument': '@localization/l10n double brackets interpolation - {{variable}}.',
-    'localization.test.interpolation.arrayArgument': '@localization/l10n array interpolation - ${0}.',
+    'localization.test.interpolation.arrayArgument': '@localization/l10n array interpolation - ${0}.${1}.',
     'localization.test.interpolation.customInterpolation': '@localization/l10n custom interpolation - %variable%.',
     'localization.test.interpolation.customArrayInterpolation': '@localization/l10n custom array interpolation - [[0]].',
     'localization.test.key.as.value': '{localization.test.simple} is the best localization for Angular!',

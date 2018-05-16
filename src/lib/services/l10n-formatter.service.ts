@@ -20,10 +20,9 @@ export abstract class L10nBaseFormatter {
 
 /**
  * regex used for localization interpolation
- * {{}} | {} | ${}
+ * ${} | {{}} | {}
  */
-const interpolationRegex: RegExp = /\{\{\s*(.+?)\s*\}\}|\{\s*(.+?)\s*\}|\$\{\s*(.+?)\s*\}/g;
-
+const interpolationRegex: RegExp = /\$\{\s*(.+?)\s*\}|\{\{\s*(.+?)\s*\}\}|\{\s*(.+?)\s*\}/g;
 
 @Injectable()
 export class L10nFormatter extends L10nBaseFormatter {
@@ -34,32 +33,24 @@ export class L10nFormatter extends L10nBaseFormatter {
 
     public interpolate(sentence: string, args: IL10nArguments): string {
         // match, (...interpolates, offset, string)
-        return sentence.replace(interpolationRegex, (match, ...interpolates) => {
-            // remove last two elements ( offset, string )
-            interpolates.splice(-2);
-            interpolates = interpolates.filter((val) => val != null);
-
+        return sentence.replace(interpolationRegex, (match, firstMatch, secondMatch, thirdMatch) => {
             // try to find property in provided arguments
             if (!IsNullOrEmpty(args)) {
-                for (let property of interpolates) {
-                    let value = args[this.trim(property)];
 
-                    if (!IsNullOrEmpty(value)) {
-                        return value;
-                    }
-                }
+                let value = args[this.trim(firstMatch)]
+                            || args[this.trim(secondMatch)]
+                            || args[this.trim(thirdMatch)];
+
+                if (!IsNullOrEmpty(value)) { return value; }
             }
 
             // try to find property in dictionary
-            for (let property of interpolates) {
-                let sentence = this._storage.getSentance(this.trim(property));
+            let sentence = this._storage.getSentance(this.trim(firstMatch))
+                            || this._storage.getSentance(this.trim(secondMatch))
+                            || this._storage.getSentance(this.trim(thirdMatch));
 
-                if (!IsNullOrEmpty(sentence)) {
-                    return sentence;
-                }
-            }
+            if (!IsNullOrEmpty(sentence)) { return sentence; }
 
-            if (!IsNullOrEmpty(interpolates)) { throw Error(`arguments are not defined in the template or dictionary: ${JSON.stringify(interpolates)}`); }
             return match;
         });
     }

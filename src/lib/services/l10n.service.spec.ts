@@ -90,14 +90,14 @@ describe('L10n Service', () => {
         let dollarArgument = service.get('localization.test.interpolation.dollarArgument', { variable: 1 });
         let singleBracketsArgument = service.get('localization.test.interpolation.singleBracketsArgument', { variable: 1 });
         let doubleBracketsArgument = service.get('localization.test.interpolation.doubleBracketsArgument', { variable: 1 });
-        let arrayArgument = service.get('localization.test.interpolation.arrayArgument', [2]);
+        let arrayArgument = service.get('localization.test.interpolation.arrayArgument', [2, 3]);
         let mixedMultipleArguments = service.get('localization.test.interpolation.mixedMultipleArguments', { variable1: 10, variable2: 20, variable3: 30 });
         let keyAsArgument = service.get('localization.test.key.as.value');
 
         expect(dollarArgument).toEqual('@localization/l10n single brackets with dollar interpolation - 1.');
         expect(singleBracketsArgument).toEqual('@localization/l10n single brackets interpolation - 1.');
         expect(doubleBracketsArgument).toEqual('@localization/l10n double brackets interpolation - 1.');
-        expect(arrayArgument).toEqual('@localization/l10n array interpolation - 2.');
+        expect(arrayArgument).toEqual('@localization/l10n array interpolation - 2.3.');
         expect(mixedMultipleArguments).toEqual('@localization/l10n 10-20-30');
         expect(keyAsArgument).toEqual('@localization/l10n is the best localization for Angular!');
    }));

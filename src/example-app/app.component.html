@@ -208,7 +208,7 @@ msgstr "Hello $&#123;value&#125;"</pre>
 "app.hello.key": "Hello $&#123;value&#125;"
 &#125;</pre>
 
-<p>default defined interpolations are <b>{{ }}</b> or <b>&#123; &#125;</b> or <b>$&#123; &#125;</b>.</p>
+<p>default defined interpolations are <b>$&#123; &#125;</b> or <b>{{ }}</b> or <b>&#123; &#125;</b>.</p>
 <pre class="prettify">
 Hello $&#123;value&#125;  =>  L10nService.get('app.hello.key', &#123;value: "world"&#125;)  =>  Hello world
 Hello $&#123;0&#125;      =>  L10nService.get('app.hello.key', ["world"])         =>  Hello world<br>
