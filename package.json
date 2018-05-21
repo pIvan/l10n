@@ -3,7 +3,7 @@
   "description": "",
   "homepage": "https://github.com/pIvan/l10n",
   "bugs": "https://github.com/pIvan/l10n/issues",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "main": "./bundles/l10n.umd.js",
   "module": "./esm5/l10n.js",
   "es2015": "./esm2015/l10n.js",
@@ -17,10 +17,15 @@
     "localization",
     "angular",
     "angular 2",
+    "angular2",
     "angular 2+",
+    "angular2+",
     "angular 4",
+    "angular4",
     "angular 5",
+    "angular5",
     "angular 6",
+    "angular6",
     "rxjs 6",
     "NativeScript",
     "locale",
@@ -31,7 +36,7 @@
   ],
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --open --aot=false",
+    "start": "ng serve --open",
     "build": "ng build --aot",
     "test": "ng test",
     "lint": "ng lint",
@@ -39,7 +44,7 @@
     "clean": "rm -rf dist",
     "build:git:demo": "ng build --prod --aot --base-href /l10n/",
     "build:library": "ng-packagr -p ng-package.json && npm run build:git:demo",
-    "build:publish": "npm publish dist/lib/ --access public"
+    "build:publish": "npm publish dist/lib/ --access public --tag=latest"
   },
   "repository": {
     "type": "git",
