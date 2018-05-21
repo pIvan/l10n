@@ -13,8 +13,6 @@ export class L10nProperties {
 
     /**
      * parse the *.properties file into an associative array
-     * @param {String} rawText 
-     * @param {Function} callbackHandler 
      */
     public parse(rawText: string): Observable<{ key: string; sentence: string }> {
         let entries = rawText

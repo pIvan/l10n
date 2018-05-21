@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { L10nBaseLoader } from './l10n-loader.service';
 import { L10nBaseStorage } from './l10n-storage.service';
 import { L10nBaseParser } from './l10n-parser.service';
+import { L10nBaseFormatter } from './l10n-formatter.service';
 import { L10nConfig } from './l10n-config.service';
 import {
     IsNullOrEmpty,
@@ -31,13 +32,7 @@ export class L10nService {
     /**
      * observers for each key in dictionary
      */
-    private _observers: { [key: string]: Subject<string> } = {};
-
-    /**
-     * regex used for localization interpolation
-     * {{}} | {} | ${}
-     */
-    private _interpolationRegex = /\{\{\s*(.+?)\s*\}\}|\{\s*(.+?)\s*\}|\$\{\s*(.+?)\s*\}/g;
+    private _observers: { [key: string]: BehaviorSubject<string> } = {};
 
     private _languageChange: Subject<IL10nLanguage> = new Subject();
 
@@ -47,6 +42,7 @@ export class L10nService {
         private _loader: L10nBaseLoader,
         private _storage: L10nBaseStorage,
         private _parser: L10nBaseParser,
+        private _formatter: L10nBaseFormatter,
         private _config: L10nConfig) {
         this.initialSettings();
     }
@@ -75,7 +71,6 @@ export class L10nService {
      * clear dictionary cache,
      * set ISO Language code and
      * and notify subscribers about change
-     * @param {String} language
      */
     public set language(language: string) {
         // if( this._language == language ){
@@ -123,7 +118,6 @@ export class L10nService {
 
     /**
      * from storage return maped values as dictionary (maped key => value)
-     * @returns {object}
      */
     public get dictionary(): IL10nDictionary {
         return this._storage.dictionary;
@@ -170,7 +164,6 @@ export class L10nService {
      * 
      * example 9:
      * l10n.get('l10n.lang.key10'); => L10n is the best localization for Angular
-     * @returns {String}
      */
     public get(key: string, args?: IL10nArguments | string, fallbackString?: string): string {
         return this.fromDictionary(key, args, fallbackString);
@@ -178,25 +171,17 @@ export class L10nService {
 
     /**
      * observe key change in dictionary and return translation
-     * @param key 
-     * @param args 
-     * @param fallbackString 
      */
-    public observe(key: string, args?: IL10nArguments | string, fallbackString?: string): BehaviorSubject<string> {
+    public observe(key: string, args?: IL10nArguments | string, fallbackString?: string): Observable<string> {
         if (!this._observers[key]) {
-            this._observers[key] = new Subject();
+            this._observers[key] = new BehaviorSubject(key);
         }
 
-        let observed = () => this.fromDictionary(key, args, fallbackString);
-        let observer = new BehaviorSubject(observed());
-        this._observers[key].asObservable().subscribe(() => observer.next(observed()));
-        return observer;
+        return this._observers[key].map((key) => this.fromDictionary(key, args, fallbackString));
     }
 
     /**
      * Manually set a translation value and notify observers about change
-     * @param {Sring} key
-     * @param {Sring} sentence
      */
     public set(key: string, sentence: string): void {
         this.addToDictionary(key, sentence);
@@ -205,10 +190,6 @@ export class L10nService {
     /**
      * return value from dictionray by specific key
      * or return callback string
-     * @returns {String}
- 	 * @param {String} key
- 	 * @param {Object|Array} args
- 	 * @param {String} fallback
      */
     private fromDictionary(key: string, args: IL10nArguments | string, fallback?: string): string {
         let sentence = this._storage.getSentance(key);
@@ -224,7 +205,6 @@ export class L10nService {
     /**
      * prepare arguments to use them in translation
      * accepted Object, Array or JSON object writen in template
-     * @param {Object|Array|String} args 
      */
     private prepareArguments(args: any): IL10nArguments {
         // we should accept JSON object writen in template
@@ -249,68 +229,15 @@ export class L10nService {
      * 
      * known interpolations
      * {{}} | {} | ${}
-     * @param {String} sentence
- 	 * @param {Object|Array} args
      */
     private evaluate(sentence: string, args: IL10nArguments): string {
-        // match, (...interpolates, offset, string)
-        return sentence.replace(this._interpolationRegex, (match, ...interpolates) => {
-            // remove last two elements ( offset, string )
-            interpolates.splice(-2);
-            interpolates = interpolates.filter((val) => val != null);
-
-            // try to find property in provided arguments
-            if (!IsNullOrEmpty(args)) {
-                for (let property of interpolates) {
-                    let value = args[this.trim(property)];
-
-                    if (!IsNullOrEmpty(value)) {
-                        return value;
-                    }
-                }
-            }
-
-            // try to find property in dictionary
-            for (let property of interpolates) {
-                let sentence = this._storage.getSentance(this.trim(property));
-
-                if (!IsNullOrEmpty(sentence)) {
-                    return sentence;
-                }
-            }
-
-
-            if (!IsNullOrEmpty(interpolates)) { this.handleError(`arguments are not defined in the template or dictionary: ${JSON.stringify(interpolates)}`); }
-            return match;
-        });
-    }
-
-    /**
-     * remove white empty spaces from string beginning and end
-     * @param {String|Number} property 
-     */
-    private trim(property: string | number): string {
-        return (property + '').trim();
-    }
-
-    /**
-     * @description
-     * Overrides the default encapsulation start and end delimiters (respectively `{{` and `}}`)
-     * @param {Object} param
-     */
-    public setInterpolation({ start, end }: { start: string; end: string; }): void {
-        this._interpolationRegex = new RegExp(`\\${start.split('').join('\\')}\s*(.+?)\s*\\${end.split('').join('\\')}`, 'g');
+        return this._formatter.interpolate(sentence, args);
     }
 
     /**
      * @description 
      * check given values and if there is no sentence 
      * return fallback string, otherwise return given key value
-     * 
-     * @param {String} sentence
-     * @param {String} fallback
-     * @param {String} key
-     * @returns {String}
      */
     private fallbackCheck(sentence: string, fallback: string, key: string): string {
         if (!IsNullOrEmpty(sentence)) {
@@ -327,8 +254,6 @@ export class L10nService {
 
     /**
      * set a translation value in storage and notify observers about change
-     * @param {string} key
- 	 * @param {string} value
      */
     private addToDictionary(key: string, value: string) {
 
@@ -346,7 +271,7 @@ export class L10nService {
             this._storage.setSentence(key, newVal);
 
             if (this._observers[key]) {
-                this._observers[key].next();
+                this._observers[key].next(key);
             }
         }
     }
@@ -407,9 +332,6 @@ export class L10nService {
     /**
      * set localization from JavaScript object
      * it's merged with previous one unless otherwise is defined
-     * 
-     * @param {Object} translations 
-     * @param {Boolean} shouldMerge 
      */
     public setFromObject(translations: { [key: string]: string }, shouldMerge: boolean = true): Observable<{}> {
         if (shouldMerge !== true) {
@@ -426,9 +348,6 @@ export class L10nService {
      * .po
      * each response is merged with previous one
      * unless otherwise is defined
-     * 
-     * @param {String} url 
-     * @param {Boolean} shouldMerge 
      */
     public setFromFile(url: string, shouldMerge: boolean = true): Observable<{}> {
         if (shouldMerge !== true) {
@@ -452,9 +371,6 @@ export class L10nService {
 
     /**
      * parse data and set to dictionary
-     * @param {Subject} subject 
-     * @param {String|Object} data 
-     * @param {String} fileType 
      */
     private parse(subject: Subject<{}>, data: any, fileType: string): Observable<{}> {
         this._parser
@@ -477,12 +393,11 @@ export class L10nService {
      * trigger change on each observer
      */
     private forceChange(): void {
-        Object.keys(this._observers).forEach((key) => this._observers[key].next());
+        Object.keys(this._observers).forEach((key) => this._observers[key].next(key));
     }
 
     /**
      * @internal
-     * @param error 
      */
     private handleError(error: Response | string): void | Promise<any> {
         let errMsg: string;

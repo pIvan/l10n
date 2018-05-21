@@ -17,7 +17,7 @@ import { L10nTestLoader, fileMock } from './../services/l10n.service.mock';
 class L10nDirectiveTextComponent {
 
     public objectAsArgument: { [key:string]: any } = { variable: 67 };
-    public arrayAsArgument: Array<any> = ['@l10n'];
+    public arrayAsArgument: Array<any> = ['@l10n', 2];
 
     constructor(localization: L10nService){
         localization.setFromObject(fileMock);
@@ -69,7 +69,7 @@ describe('L10n Directive', () => {
         let withObjectAsArgument = componentEl.querySelector('#withObjectAsArgument').textContent;
         let withArrayAsArgument = componentEl.querySelector('#withArrayAsArgument').textContent;
         expect(withObjectAsArgument).toEqual('@localization/l10n single brackets with dollar interpolation - 67.');
-        expect(withArrayAsArgument).toEqual('@localization/l10n array interpolation - @l10n.');
+        expect(withArrayAsArgument).toEqual('@localization/l10n array interpolation - @l10n.2.');
     }));
 
     it(`should render translation with JSON arguments`, async(() => {

@@ -3,7 +3,7 @@
   "description": "",
   "homepage": "https://github.com/pIvan/l10n",
   "bugs": "https://github.com/pIvan/l10n/issues",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "main": "./bundles/l10n.umd.js",
   "module": "./esm5/l10n.js",
   "es2015": "./esm2015/l10n.js",
@@ -29,7 +29,7 @@
   ],
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --open --aot=false",
+    "start": "ng serve --open",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -80,6 +80,6 @@
     "typescript": "~2.6.1",
     "bootstrap": "4.0.0-alpha.6",
     "google-code-prettify": "1.0.5",
-    "ng-packagr": "^1.6.0"
+    "ng-packagr": "^2.4.4"
   }
 }

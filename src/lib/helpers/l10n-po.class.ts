@@ -19,9 +19,7 @@ export class L10nPo {
     private newLines = /[\r\n]+/; // support both unix and windows newline formats.
 
     /**
-     * parse the *.po file into an associative array
-     * @param {String} rawText 
-     * @param {Function} callbackHandler 
+     * parse the *.po file into an associative array 
      */
     public parse(rawText: string): Observable<{ key: string; sentence: string }> {
         let entries = rawText

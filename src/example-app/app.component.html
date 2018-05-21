@@ -123,6 +123,7 @@ import &#123;
     L10nBaseLoader,
     L10nBaseStorage,
     L10nBaseParser,
+    L10nBaseFormatter,
     LanguageCodes
 &#125; from '@localization/l10n';
                     
@@ -163,6 +164,12 @@ export class CustomParser extends L10nBaseParser &#123;
 &#125;
 
 
+@Injectable()
+export class CustomFormatter extends L10nBaseFormatter &#123;
+    public abstract interpolate(sentence: string, args: IL10nArguments): string;
+&#125;
+
+
 @NgModule(&#123;
     imports: [
         BrowserModule,
@@ -171,13 +178,14 @@ export class CustomParser extends L10nBaseParser &#123;
             loader: CustomLoader, 
             storage: CustomStorage, 
             parser: CustomParser, 
+            formatter: CustomFormatter,
             config: &#123; 
                 defaultLanguage: LanguageCodes.EnglishUnitedStates, 
                 bindingProperty: 'textContent' 
             &#125; 
         &#125;)
     ],
-    providers: [CustomLoader, CustomStorage, CustomParser],
+    providers: [CustomLoader, CustomStorage, CustomParser, CustomFormatter],
     bootstrap: [AppComponent]
 &#125;)
 export class AppModule &#123;&#125;
@@ -200,7 +208,7 @@ msgstr "Hello $&#123;value&#125;"</pre>
 "app.hello.key": "Hello $&#123;value&#125;"
 &#125;</pre>
 
-<p>default defined interpolations are <b>{{ }}</b> or <b>&#123; &#125;</b> or <b>$&#123; &#125;</b>.</p>
+<p>default defined interpolations are <b>$&#123; &#125;</b> or <b>{{ }}</b> or <b>&#123; &#125;</b>.</p>
 <pre class="prettify">
 Hello $&#123;value&#125;  =>  L10nService.get('app.hello.key', &#123;value: "world"&#125;)  =>  Hello world
 Hello $&#123;0&#125;      =>  L10nService.get('app.hello.key', ["world"])         =>  Hello world<br>
@@ -210,7 +218,31 @@ Hello &#123;&#123;value&#125;&#125; =>  L10nService.get('app.hello.key', &#123;v
 Hello &#123;&#123;0&#125;&#125;     =>  L10nService.get('app.hello.key', ["world"])         =>  Hello world</pre>
 
         <p>Also it is possible to change default interpolations with something custom</p>
-        <pre class="prettify">L10nService.setInterpolation(&#123; start: '[[', end: ']]' &#125;);</pre>
+        <pre class="prettify">
+import &#123; L10nModule, L10nBaseFormatter, defineInterpolation, IL10nArguments &#125; from '@localization/l10n';
+
+@Injectable()
+export class CustomFormatter extends L10nBaseFormatter &#123;
+    public interpolate(sentence: string, args: IL10nArguments): string &#123;
+        return sentence.replace( defineInterpolation(['[[', ']]']), (match, interpolates) => &#123;    
+            if (!IsNullOrEmpty(args)) &#123;
+                return args[this.trim(interpolates)];
+            &#125;
+
+            return match;
+        &#125;);
+    &#125;
+&#125;
+
+@NgModule(&#123;
+    imports: [
+        ...,
+        L10nModule.forRoot(&#123; 
+            formatter: CustomFormatter
+        &#125;)
+    ]
+&#125;)
+export class AppModule &#123;&#125;</pre>
         <pre class="prettify">app.hello.key = Hello [[value]]</pre>
         <p>possible is to use other key from dictionary as value</p>
         <pre class="prettify">app.world.key = world

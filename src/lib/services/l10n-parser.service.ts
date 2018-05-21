@@ -37,7 +37,6 @@ export class L10nParser extends L10nBaseParser {
 
     /**
      * parse the *.properties file into an associative array
-     * @param {String} rawText
      */
     private parseProperties(rawText: string, ): Observable<{ key: string; sentence: string }> {
         return this._properties.parse(rawText);
@@ -45,7 +44,6 @@ export class L10nParser extends L10nBaseParser {
 
     /**
      * parse the *.po file into an associative array
-     * @param {String} rawText
      */
     private parsePo(rawText: string): Observable<{ key: string; sentence: string }> {
         return this._po.parse(rawText);
@@ -53,7 +51,6 @@ export class L10nParser extends L10nBaseParser {
 
     /**
      * parse the *.json file into an associative array
-     * @param {String} rawText
      */
     private parseJSON(json: any): Observable<{ key: string; sentence: string }> {
         return this._json.parse(json);
