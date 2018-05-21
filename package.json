@@ -37,7 +37,7 @@
     "clean": "rm -rf dist",
     "build:git:demo": "ng build --prod --aot --base-href /l10n/",
     "build:library": "ng-packagr -p ng-package.json && npm run build:git:demo",
-    "build:publish": "npm publish dist/lib --access public"
+    "build:publish": "npm publish dist/lib/ --access public"
   },
   "repository": {
     "type": "git",
