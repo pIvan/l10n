@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { IL10nFileRequest, ResponseType, ContentType } from './../helpers/helpers.class';
-import { Observable, Subject, from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, from } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 
 export interface IL10nLoaderResponse {
@@ -31,12 +31,7 @@ export abstract class L10nBaseLoader {
             return from([]);
         }
 
-        return this.getFile(params).pipe(
-            map((response) => {
-                this._loadedUrls[params.url] = true;
-                return response;
-            })
-        );
+        return this.getFile(params).pipe(tap(() => this._loadedUrls[params.url] = true));
     }
 
     public abstract getFile(params: IL10nFileRequest): Observable<IL10nLoaderResponse>;
@@ -68,20 +63,14 @@ export class L10nLoader extends L10nBaseLoader {
     }
 
     public getFile({ url }: IL10nFileRequest): Observable<IL10nLoaderResponse> {
-        let subject = new Subject<IL10nLoaderResponse>();
-
         let fileType = this.getFileExtension(url);
         let responseType = this.responseTypes[fileType];
         let contentType = this.contentTypes[fileType];
 
         let headers = new HttpHeaders({ "X-Requested-With": "XMLHttpRequest", "Content-type": contentType });
 
-        this.http.get(url, { headers: headers, responseType: responseType })
-            .subscribe((response) => {
-                subject.next({ response, fileType });
-                subject.complete();
-            }, (error) => subject.error(error));
-
-        return subject.asObservable();
+        return this.http
+                .get(url, { headers: headers, responseType: responseType })
+                .pipe(map((response) => { return { response, fileType }; }));
     }
 }

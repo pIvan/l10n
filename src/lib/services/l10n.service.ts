@@ -1,10 +1,11 @@
 import { Injectable, Inject, Optional } from '@angular/core';
-import { Subject, Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators'
+import { Subject, Observable, BehaviorSubject, of } from 'rxjs';
+import { map, catchError, finalize } from 'rxjs/operators';
 import { L10nBaseLoader } from './l10n-loader.service';
 import { L10nBaseStorage } from './l10n-storage.service';
 import { L10nBaseParser } from './l10n-parser.service';
 import { L10nBaseFormatter } from './l10n-formatter.service';
+import { L10nBaseErrorHandler } from './l10n-error-handler.service';
 import { L10nConfig } from './l10n-config.service';
 import {
     IsNullOrEmpty,
@@ -39,6 +40,7 @@ export class L10nService {
     private _dictionaryReady: Subject<{}> = new Subject();
 
     constructor(
+        private _errorHandler: L10nBaseErrorHandler,
         private _loader: L10nBaseLoader,
         private _storage: L10nBaseStorage,
         private _parser: L10nBaseParser,
@@ -74,7 +76,7 @@ export class L10nService {
      */
     public set language(language: string) {
         // if( this._language == language ){
-        //     this.handleError(`trying to set already used language`);
+        //     this._errorHandler.handleError(`trying to set already used language`);
         //     return;
         // }
 
@@ -219,7 +221,7 @@ export class L10nService {
                 return JSON.parse(validArgs);
             }
             catch (e) {
-                throw new SyntaxError(`Wrong parameter. Expected a valid Object or Array, received: ${args}`);
+                this._errorHandler.handleError(`Wrong parameter. Expected a valid Object or Array, received: ${args}`);
             }
         }
 
@@ -261,7 +263,7 @@ export class L10nService {
     private addToDictionary(key: string, value: string) {
 
         if (IsNullOrEmpty(key) && IsNullOrEmpty(value)) {
-            this.handleError(`To manually set translation you need to define key and sentence!`);
+            this._errorHandler.handleError(`To manually set translation you need to define key and sentence!`);
             return;
         }
 
@@ -336,12 +338,12 @@ export class L10nService {
      * set localization from JavaScript object
      * it's merged with previous one unless otherwise is defined
      */
-    public setFromObject(translations: { [key: string]: string }, shouldMerge: boolean = true): Observable<{}> {
+    public setFromObject(translations: { [key: string]: string }, shouldMerge: boolean = true): Promise<void | {}> {
         if (shouldMerge !== true) {
             this.clear();
         }
 
-        return this.parse(new Subject(), translations, 'json');
+        return this.parse(translations, 'json');
     }
 
     /**
@@ -352,67 +354,43 @@ export class L10nService {
      * each response is merged with previous one
      * unless otherwise is defined
      */
-    public setFromFile(url: string, shouldMerge: boolean = true): Observable<{}> {
+    public setFromFile(url: string, shouldMerge: boolean = true): Promise<void | {}> {
         if (shouldMerge !== true) {
             this.clear();
         }
 
-        const subject = new Subject();
         let loading = true;
 
-        this._loader
+        return this._loader
             .setFromFile({ url, language: this._language, code: this._languageCode, direction: this.direction })
-            .subscribe(({ response, fileType }) => {
-                this.parse(subject, response, fileType);
-                loading = false;
-            },
-                (error: Response) => this.handleError(error),
-                () => loading ? this.forceChange() : null);
-
-        return subject.asObservable();
+            .pipe(
+                map(({ response, fileType }) => {
+                    loading = false;
+                    this.parse(response, fileType);
+                }),
+                catchError((error: Response) => of(this._errorHandler.handleError(error))),
+                finalize(() => loading ? this.forceChange() : null)
+            ).toPromise();
     }
 
     /**
      * parse data and set to dictionary
      */
-    private parse(subject: Subject<{}>, data: any, fileType: string): Observable<{}> {
-        this._parser
+    private parse(data: any, fileType: string): Promise<void | {}> {
+        return this._parser
             .parse(data, fileType)
-            .subscribe(
-                ({ key, sentence }) => this.addToDictionary(key, sentence),
-                (error) => this.handleError(error),
-                () => {
-                    this._dictionaryReady.next();
-                    subject.next();
-                    subject.complete();
-                }
-            );
-        return subject.asObservable();
+            .pipe(
+                map(({ key, sentence }) => this.addToDictionary(key, sentence)),
+                catchError((error) => of(this._errorHandler.handleError(error))),
+                finalize(() => this._dictionaryReady.next())
+            ).toPromise();
     }
 
     /**
-     * @internal
      * if file isn't loaded and values are already in dictionary
      * trigger change on each observer
      */
     private forceChange(): void {
         Object.keys(this._observers).forEach((key) => this._observers[key].next(key));
-    }
-
-    /**
-     * @internal
-     */
-    private handleError(error: Response | string): void | Promise<any> {
-        let errMsg: string;
-
-        if (error instanceof Response) {
-            errMsg = `Lokalization could not find ${error.url} - status: ${error.status} - ${error.statusText || ''}`;
-
-            return Promise.reject(errMsg);
-        } else {
-            errMsg = error;
-        }
-
-        throw Error(errMsg);
     }
 }

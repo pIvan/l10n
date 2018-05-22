@@ -1,6 +1,5 @@
 import { Observable, Observer } from 'rxjs';
 
-
 export class L10nJSON {
 
     /**

@@ -21,6 +21,7 @@ export class AppComponent implements AfterViewInit {
   public language: string;
 
   constructor(private localization: L10nService, private elRef: ElementRef){
+    localization.dictionaryReady.subscribe(() => console.log('the dictionary is ready'))
   }
 
   public get dictionary(): IL10nDictionary {

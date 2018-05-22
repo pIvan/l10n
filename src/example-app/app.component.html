@@ -115,7 +115,8 @@ export class AppModule &#123;&#125;</pre>
         <div class="card-header">Configuration</div>
         <div class="card-block">
             <p>By default, if you want to load .properties, .po or .json files you don't need to configure anything.<br>
-            But depending on your needs, you can write your own loader, parser or storage provider</p>
+            But depending on your needs, you can write your own loader, parser or storage provider,<br>
+            also it is possible to write custom formatter and error handler</p>
             <pre class="prettify">
 import &#123; 
     IL10nLoaderResponse, 
@@ -124,6 +125,7 @@ import &#123;
     L10nBaseStorage,
     L10nBaseParser,
     L10nBaseFormatter,
+    L10nBaseErrorHandler,
     LanguageCodes
 &#125; from '@localization/l10n';
                     
@@ -170,6 +172,12 @@ export class CustomFormatter extends L10nBaseFormatter &#123;
 &#125;
 
 
+@Injectable()
+export class CustomErrorHandler extends L10nBaseErrorHandler &#123;
+    public abstract handleError(error: any): void;
+&#125;
+
+
 @NgModule(&#123;
     imports: [
         BrowserModule,
@@ -179,6 +187,7 @@ export class CustomFormatter extends L10nBaseFormatter &#123;
             storage: CustomStorage, 
             parser: CustomParser, 
             formatter: CustomFormatter,
+            errorHandler: CustomErrorHandler,
             config: &#123; 
                 defaultLanguage: LanguageCodes.EnglishUnitedStates, 
                 bindingProperty: 'textContent'
@@ -217,7 +226,7 @@ Hello &#123;0&#125;       =>  L10nService.get('app.hello.key', ["world"])       
 Hello &#123;&#123;value&#125;&#125; =>  L10nService.get('app.hello.key', &#123;value: "world"&#125;)  =>  Hello world
 Hello &#123;&#123;0&#125;&#125;     =>  L10nService.get('app.hello.key', ["world"])         =>  Hello world</pre>
 
-        <p>Also it is possible to change default interpolations with something custom</p>
+        <p>It is possible to change default interpolations with something custom</p>
         <pre class="prettify">
 import &#123; L10nModule, L10nBaseFormatter, defineInterpolation, IL10nArguments &#125; from '@localization/l10n';
 

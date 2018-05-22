@@ -30,7 +30,6 @@ export class L10nParser extends L10nBaseParser {
             return this.parseJSON(response);
         }
         else {
-            // return Observable.
             throw Error(`Unknown file type`);
         }
     }
