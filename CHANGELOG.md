@@ -1,3 +1,36 @@
+<a name="2.1.5"></a>
+## [2.1.5](https://github.com/pIvan/l10n/commit/0f1890bc3654e012ba04057a3c7f359a2007eec8) (2018-05-22)
+
+
+### Code Refactoring
+* **L10nService:** refactored rxjs implementations
+
+### Possible Breaking Changes
+* **L10nService:** methods `setFromFile` and `setFromObject` return Promise instead Observable, since here we don't track any sequence 
+
+### Small Features
+* **error handling:** implemented new error handling service `L10nErrorHandler`
+  ```
+  @Injectable()
+  export class L10nErrorHandler extends L10nBaseErrorHandler {
+    public handleError(error: any): void {
+        handle error
+    }
+  }
+
+  @NgModule({
+      imports: [
+          ...,
+          L10nModule.forRoot({ 
+              errorHandler: L10nErrorHandler
+          })
+      ],
+      bootstrap: []
+  })
+  export class AppModule {}
+  ```
+
+
 
 <a name="2.1.3"></a>
 ## [2.1.3](https://github.com/pIvan/l10n/commit/1f90c04184f12e890682ab728771d4a06c2edb3f) (2018-05-16)
