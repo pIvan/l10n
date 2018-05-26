@@ -39,11 +39,9 @@ export class L10nDirective implements OnInit, OnDestroy, OnChanges {
     }
 
     public ngOnChanges(change: SimpleChanges): void {
-        if (change['localizationParams']) {
-            if (change['localizationParams'].currentValue &&
-                change['localizationParams'].currentValue != change['localizationParams'].previousValue) {
-                this.localize(this.localizationKey, change['localizationParams'].currentValue);
-            }
+        const params = change['localizationParams'];
+        if (params && params.currentValue && params.currentValue != params.previousValue) {
+            this.localize(this.localizationKey, change['localizationParams'].currentValue);
         }
     }
 

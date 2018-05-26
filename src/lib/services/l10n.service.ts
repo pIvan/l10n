@@ -1,6 +1,6 @@
 import { Injectable, Inject, Optional } from '@angular/core';
 import { Subject, Observable, BehaviorSubject, of } from 'rxjs';
-import { map, catchError, finalize } from 'rxjs/operators';
+import { map, catchError, tap, flatMap, finalize } from 'rxjs/operators';
 import { L10nBaseLoader } from './l10n-loader.service';
 import { L10nBaseStorage } from './l10n-storage.service';
 import { L10nBaseParser } from './l10n-parser.service';
@@ -50,7 +50,6 @@ export class L10nService {
     }
 
     private initialSettings(): void {
-        // initially try to set language
         this.language = this._config.defaultLanguage || this.navigatorLang;
     }
 
@@ -75,11 +74,6 @@ export class L10nService {
      * and notify subscribers about change
      */
     public set language(language: string) {
-        // if( this._language == language ){
-        //     this._errorHandler.handleError(`trying to set already used language`);
-        //     return;
-        // }
-
         this._language = language;
         this._languageCode = language.split('-', 1)[0].toLowerCase();
 
@@ -179,9 +173,8 @@ export class L10nService {
             this._observers[key] = new BehaviorSubject(key);
         }
 
-        return this._observers[key].pipe(
-            map(() => this.fromDictionary(key, args, fallbackString))
-        );
+        return this._observers[key]
+            .pipe(map(() => this.fromDictionary(key, args, fallbackString)));
     }
 
     /**
@@ -261,10 +254,8 @@ export class L10nService {
      * set a translation value in storage and notify observers about change
      */
     private addToDictionary(key: string, value: string) {
-
         if (IsNullOrEmpty(key) && IsNullOrEmpty(value)) {
-            this._errorHandler.handleError(`To manually set translation you need to define key and sentence!`);
-            return;
+            return this._errorHandler.handleError(`To manually set translation you need to define key and sentence!`);
         }
 
         let oldVal = this._storage.getSentance(key);
@@ -360,16 +351,15 @@ export class L10nService {
         }
 
         let loading = true;
-
         return this._loader
             .setFromFile({ url, language: this._language, code: this._languageCode, direction: this.direction })
             .pipe(
-                map(({ response, fileType }) => {
+                flatMap(({ response, fileType }) => {
                     loading = false;
-                    this.parse(response, fileType);
+                    return this.parse(response, fileType);
                 }),
                 catchError((error: Response) => of(this._errorHandler.handleError(error))),
-                finalize(() => loading ? this.forceChange() : null)
+                finalize(() => loading && this.forceChange())
             ).toPromise();
     }
 
@@ -380,7 +370,7 @@ export class L10nService {
         return this._parser
             .parse(data, fileType)
             .pipe(
-                map(({ key, sentence }) => this.addToDictionary(key, sentence)),
+                tap(({ key, sentence }) => this.addToDictionary(key, sentence)),
                 catchError((error) => of(this._errorHandler.handleError(error))),
                 finalize(() => this._dictionaryReady.next())
             ).toPromise();

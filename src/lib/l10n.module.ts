@@ -54,6 +54,14 @@ export function configFactory(userConfig: IL10nModuleConfig) {
     L10nDirective,
     L10nPipe
   ],
+  providers: [
+    L10nLoader
+    ,L10nStorage
+    ,L10nParser
+    ,L10nFormatter
+    ,L10nErrorHandler
+    ,{ provide: L10nConfig, useFactory: configFactory, deps: [LOCALIZATION_L10N_CONFIG] }
+  ],
   exports: [
     L10nDirective,
     L10nPipe
@@ -73,8 +81,7 @@ export class L10nModule {
         { provide: L10nBaseStorage, useClass: configuration.storage || L10nStorage },
         { provide: L10nBaseParser, useClass: configuration.parser || L10nParser },
         { provide: L10nBaseFormatter, useClass: configuration.formatter || L10nFormatter },
-        { provide: L10nBaseErrorHandler, useClass: configuration.errorHandler || L10nErrorHandler },
-        { provide: L10nConfig, useFactory: configFactory, deps: [LOCALIZATION_L10N_CONFIG] }
+        { provide: L10nBaseErrorHandler, useClass: configuration.errorHandler || L10nErrorHandler }
       ]
     }
   }
