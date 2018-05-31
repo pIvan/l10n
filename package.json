@@ -3,7 +3,7 @@
   "description": "",
   "homepage": "https://github.com/pIvan/l10n",
   "bugs": "https://github.com/pIvan/l10n/issues",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "main": "./bundles/l10n.umd.js",
   "module": "./esm5/l10n.js",
   "es2015": "./esm2015/l10n.js",
@@ -11,28 +11,33 @@
   "metadata": "l10n.metadata.json",
   "author": "Ivan Pintar",
   "license": "MIT",
+  "readmeFilename": "README.md",
+  "nativescript": {
+    "platforms": {
+        "android": "3.0.0",
+        "ios": "3.0.0"
+    }
+  },
   "keywords": [
     "l10n",
     "translation",
     "localization",
     "angular",
     "angular 2",
-    "angular2",
     "angular 2+",
-    "angular2+",
     "angular 4",
-    "angular4",
     "angular 5",
-    "angular5",
     "angular 6",
-    "angular6",
     "rxjs 6",
     "NativeScript",
     "locale",
     "language",
     "translate",
     "format",
-    "culture"
+    "culture",
+    "JavaScript",
+    "Android",
+    "iOS"
   ],
   "scripts": {
     "ng": "ng",

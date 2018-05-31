@@ -44,6 +44,7 @@
                 <li>load localization file/s when you need it</li>
                 <li>easily manage localization storage</li>
                 <li>customizable localization loader</li>
+                <li>NativeScript ready <a href="#nativescript">check configuration</a></li>
             </ul>
         </div>
     </div>
@@ -66,7 +67,7 @@
     </div>
     <br>
 
-    <div class="card">
+    <div class="card" id="installation">
         <div class="card-header">Installation</div>
         <div class="card-block">
             <p>To install this component to an external project, follow the procedure:</p>
@@ -78,7 +79,7 @@
 
 
 @Injectable()
-export class LocalizationResolve implements Resolve &#123;
+export class LocalizationResolve implements Resolve&lt;any&gt; &#123;
 
     constructor(private localization: L10nService)&#123;
         this.localization.languageChanges.subscribe((&#123; code &#125;) => &#123;
@@ -86,7 +87,7 @@ export class LocalizationResolve implements Resolve &#123;
         &#125;)
     &#125;
 
-    public resolve(): Observable|Promise &#123;
+    public resolve(): Observable&lt;any&gt;|Promise&lt;any&gt; &#123;
         return this.localization.setFromFile(`$&#123;this.localization.languageCode&#125;.locales.properties`);
     &#125;
 &#125;
@@ -314,6 +315,88 @@ console.log( translation ); => Hello world</pre>
     </div>
     <br>
 
+    <div class="card" id="nativescript" ngNonBindable>
+        <div class="card-header">NativeScript</div>
+        <div class="card-block">
+            <p>To configure and use with <a href="https://www.nativescript.org/" target="_blank">NativeScript</a> is easy</p>
+            <p><code>tns plugin add @localization/l10n</code></p>
+            <p>Now we need to prepare custom File loader and Localization resolver</p>
+            <pre class="prettify">import &#123; L10nModule, L10nService, L10nBaseLoader &#125; from '@localization/l10n';
+import &#123; knownFolders &#125; from "file-system";
+import &#123; Subject, Observable, from &#125; from 'rxjs';
+import &#123; map &#125; from 'rxjs/operators';
+import &#123; Resolve &#125; from "@angular/router";
+...
+import &#123; NativeScriptModule &#125; from "nativescript-angular/nativescript.module";
+import &#123; NativeScriptRouterModule &#125; from "nativescript-angular/router";
+...
+...
 
+@Injectable()
+export class CustomLoader extends L10nBaseLoader &#123;
+
+    private readonly folderName = 'locales'; // folder where you place your locale files, 
+                                            // in our case that is locales/en.locales.properties
+    private readonly documents = knownFolders.currentApp();
+    private readonly folder = this.documents.getFolder(this.folderName);
+
+    public getFile(&#123; url, code &#125;: IL10nFileRequest ): Observable&lt;IL10nLoaderResponse> &#123;
+        let fileType = this.getFileExtension( url );                           
+        let file = this.folder.getFile(url);
+
+        return from(file.readText())
+                .pipe(map((response) => &#123;
+                    return &#123; response, fileType &#125;
+                &#125;));
+    &#125;
+&#125;
+
+                                                        
+@Injectable()
+export class LocalizationResolve implements Resolve&lt;any&gt; &#123;
+                            
+    constructor(private localization: L10nService)&#123;
+        this.localization.languageChanges.subscribe((&#123; code &#125;) => &#123;
+            this.localization.setFromFile(`$&#123;code&#125;.locales.properties`);
+        &#125;)
+    &#125;
+                            
+    public resolve(): Observable&lt;any&gt;|Promise&lt;any&gt; &#123;
+        return this.localization.setFromFile(`$&#123;this.localization.languageCode&#125;.locales.properties`);
+    &#125;
+&#125;
+
+
+@NgModule(&#123;
+    imports: [
+        NativeScriptModule,
+        L10nModule.forRoot(&#123; 
+            config: &#123;defaultLanguage: LanguageCodes.EnglishUnitedStates, bindingProperty: 'text' &#125;,
+            loader: CustomLoader
+        &#125;),
+        NativeScriptRouterModule.forRoot([
+            &#123; path: '', component: AppComponent, resolve: &#123; localization: LocalizationResolve &#125;&#125;
+        ])
+    ],
+    providers: [
+        LocalizationResolve,
+        L10nService, // because currently NativeScript doesn't work with @Injectable(&#123; providedIn: 'root' &#125;)
+        CustomLoader
+    ],
+    bootstrap: [AppComponent]
+&#125;)
+export class AppModule &#123;&#125;</pre>
+
+        <br>
+        <p>Use case is same as it is for HTML</p>
+        <pre class="prettify">&lt;ActionBar title="&#123;&#123; 'app.header.title' | l10n &#125;&#125;" class="action-bar"&gt;&lt;/ActionBar&gt;</pre>
+        <a href="assets/NativeScript.png" target="_blank">
+            <img src="assets/NativeScript.png" class="img-thumbnail img-fluid">
+        </a>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
     
 </div>

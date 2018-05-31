@@ -101,6 +101,98 @@ Use the following snippet inside your template:
 ```
 
 
+## NativeScript
+```shell
+tns plugin add @localization/l10n
+```
+
+Use the following snippet inside your app module: 
+```shell
+import { L10nModule, L10nService, L10nBaseLoader } from '@localization/l10n';
+import { knownFolders } from "file-system";
+import { Subject, Observable, from } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Resolve } from "@angular/router";
+...
+import { NativeScriptModule } from "nativescript-angular/nativescript.module";
+import { NativeScriptRouterModule } from "nativescript-angular/router";
+...
+...
+
+@Injectable()
+export class CustomLoader extends L10nBaseLoader {
+
+    private readonly folderName = 'locales'; // folder where you place your locale files, 
+                                            // in our case that is locales/en.locales.properties
+    private readonly documents = knownFolders.currentApp();
+    private readonly folder = this.documents.getFolder(this.folderName);
+
+    public getFile({ url, code }: IL10nFileRequest ): Observable<IL10nLoaderResponse> {
+        let fileType = this.getFileExtension( url );                           
+        let file = this.folder.getFile(url);
+
+        return from(file.readText())
+                .pipe(map((response) => {
+                    return { response, fileType }
+                }));
+    }
+}
+
+@Injectable()
+export class LocalizationResolve implements Resolve {
+
+    constructor(private localization: L10nService){
+        this.localization.languageChanges.subscribe(({ code }) => {
+            this.localization.setFromFile(`${code}.locales.properties`);
+        })
+    }
+
+    public resolve(): Observable|Promise {
+        return this.localization.setFromFile(`${this.localization.languageCode}.locales.properties`);
+    }
+}
+
+@NgModule({
+    imports: [
+        NativeScriptModule,
+        L10nModule.forRoot({ 
+            config: {defaultLanguage: LanguageCodes.EnglishUnitedStates, bindingProperty: 'text' },
+            loader: CustomLoader
+        }),
+        NativeScriptRouterModule.forRoot([
+            { path: '', component: AppComponent, resolve: { localization: LocalizationResolve }}
+        ])
+    ],
+    providers: [
+        LocalizationResolve,
+        L10nService, // because currently NativeScript doesn\'t work with @Injectable({ providedIn: \'root\' })
+        CustomLoader
+    ],
+    bootstrap: [AppComponent]
+})
+export class AppModule {}
+```
+
+Use the following snippet inside your template: 
+```shell
+<ActionBar title="{{ 'app.header.title' | l10n }}" class="action-bar"></ActionBar>
+<ActionBar [title]="'app.hello.key' | l10n"></ActionBar>
+<Label text="{{'app.hello.key' | l10n }}"></Label>
+<Button text="{{'app.hello.key' | l10n }}" (tap)="onTap($event)"></Button>
+```
+
+If bindingProperty in configuration is set to text l10 directive
+will use it as default element property
+```shell
+<Label l10n="app.hello.key" [l10n-args]="params"></Label>
+<Label l10n="app.hello.key" [l10n-args]="{value: 'world'}"></Label>
+<Label l10n="app.hello.key" l10n-args="{value: 'world'}"></Label>
+
+<Label [l10n]="'app.hello.key'" [l10n-args]="params"></Label>
+<Label [l10n]="'app.hello.key'" l10n-args="{value: 'world'}"></Label>
+```
+
+
 ## Developing
 
 ### Built With: 
