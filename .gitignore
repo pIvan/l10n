@@ -6,6 +6,13 @@
 /out-tsc
 package-lock.json
 
+# NativeScript demo
+**/app/*.js
+**/app/**/*.js
+platforms
+.cloud
+hooks/
+
 # dependencies
 /node_modules
 
