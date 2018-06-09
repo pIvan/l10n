@@ -42,8 +42,7 @@ export interface IL10nModuleConfig {
 export const LOCALIZATION_L10N_CONFIG = new InjectionToken<void>('LOCALIZATION_L10N_CONFIG');
 
 export function configFactory(userConfig: IL10nModuleConfig) {
-  let config = new L10nConfig();
-  return Object.assign(config, userConfig.config);
+  return {...(new L10nConfig()), ...userConfig.config}
 }
 
 @NgModule({
