@@ -5,8 +5,6 @@
 
 [![npm version](https://badge.fury.io/js/%40localization%2Fl10n.svg)](https://www.npmjs.com/package/@localization/l10n)
 [![Build Status](https://travis-ci.org/pIvan/l10n.svg?branch=master)](https://travis-ci.org/pIvan/l10n)
-[![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/@localization/l10n)
-[![GitHub issues](https://img.shields.io/github/issues-raw/badges/shields.svg)](https://www.npmjs.com/package/@localization/l10n)
 [![Known Vulnerabilities](https://snyk.io/test/npm/@localization/l10n/badge.svg)](https://snyk.io/test/npm/@localization/l10n)
 
 # Demo
