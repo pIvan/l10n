@@ -1,4 +1,4 @@
-import { Injectable, Inject, Optional } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Subject, Observable, BehaviorSubject, of } from 'rxjs';
 import { map, catchError, tap, flatMap, finalize } from 'rxjs/operators';
 import { L10nBaseLoader } from './l10n-loader.service';

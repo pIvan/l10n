@@ -5,7 +5,7 @@
  * Licensed under the MIT License
  * See https://github.com/pIvan/l10n/blob/master/README.md
  */
-import { NgModule, ModuleWithProviders, InjectionToken, Optional, Inject, SkipSelf } from '@angular/core';
+import { NgModule, ModuleWithProviders, InjectionToken } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { L10nService } from './services/l10n.service';
 import { L10nLoader, L10nBaseLoader } from './services/l10n-loader.service';

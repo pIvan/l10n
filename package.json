@@ -3,7 +3,7 @@
   "description": "",
   "homepage": "https://github.com/pIvan/l10n",
   "bugs": "https://github.com/pIvan/l10n/issues",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "main": "./bundles/l10n.umd.js",
   "module": "./esm5/l10n.js",
   "es2015": "./esm2015/l10n.js",
@@ -14,8 +14,8 @@
   "readmeFilename": "README.md",
   "nativescript": {
     "platforms": {
-        "android": "3.0.0",
-        "ios": "3.0.0"
+      "android": "3.0.0",
+      "ios": "3.0.0"
     }
   },
   "keywords": [
@@ -48,29 +48,26 @@
     "e2e": "ng e2e",
     "clean": "rm -rf dist",
     "build:git:demo": "ng build --prod",
-    "build:library": "ng-packagr -p ng-package.json && npm run build:git:demo",
+    "build:library": "ng test && ng-packagr -p ng-package.json && npm run build:git:demo",
     "build:publish": "npm publish dist/lib/ --access public --tag=latest"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/pIvan/l10n.git"
   },
-  "peerDependencies": {
-    "@angular/core": "6.0.1",
-    "rxjs": "^6.1.0"
-  },
+  "peerDependencies": {},
   "devDependencies": {
-    "@angular/animations": "6.0.1",
-    "@angular/cli": "^6.0.1",
-    "@angular/common": "6.0.1",
-    "@angular/compiler": "6.0.1",
-    "@angular/compiler-cli": "6.0.1",
-    "@angular/core": "6.0.1",
-    "@angular/forms": "6.0.1",
-    "@angular/http": "6.0.1",
-    "@angular/platform-browser": "6.0.1",
-    "@angular/platform-browser-dynamic": "6.0.1",
-    "@angular/router": "6.0.1",
+    "@angular/animations": "6.0.7",
+    "@angular/cli": "^6.0.8",
+    "@angular/common": "6.0.7",
+    "@angular/compiler": "6.0.7",
+    "@angular/compiler-cli": "6.0.7",
+    "@angular/core": "6.0.7",
+    "@angular/forms": "6.0.7",
+    "@angular/http": "6.0.7",
+    "@angular/platform-browser": "6.0.7",
+    "@angular/platform-browser-dynamic": "6.0.7",
+    "@angular/router": "6.0.7",
     "@types/jasmine": "~2.5.53",
     "@types/jasminewd2": "~2.0.2",
     "@types/node": "~6.0.60",
@@ -87,7 +84,7 @@
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
     "ng-packagr": "^2.4.4",
-    "rxjs": "^6.1.0",
+    "rxjs": "^6.2.1",
     "ts-node": "~3.3.0",
     "tslint": "~5.8.0",
     "typescript": "2.7.2",
