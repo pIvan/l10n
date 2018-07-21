@@ -1,3 +1,8 @@
+<a name="2.1.7"></a>
+## [2.1.7](https://github.com/pIvan/l10n/commit/4a5550fd32cbb066fc1d2c3e18f3c50d2a951374) (2018-07-21)
+
+### Dependency update
+
 <a name="2.1.5"></a>
 ## [2.1.5](https://github.com/pIvan/l10n/commit/0f1890bc3654e012ba04057a3c7f359a2007eec8) (2018-05-22)
 
