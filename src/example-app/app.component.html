@@ -396,6 +396,90 @@ export class AppModule &#123;&#125;</pre>
         </div>
     </div>
     <br>
+    
+
+    <div class="card">
+        <div class="card-header">List of service methods</div>
+        <div class="card-block">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>language</td>
+                        <td><code>Setter.String</code></td>
+                        <td>Used to set language</td>
+                    </tr>
+                    <tr>
+                        <td>language</td>
+                        <td><code>Getter.String</code></td>
+                        <td>Return language ISO code</td>
+                    </tr>
+                    <tr>
+                        <td>languageCode</td>
+                        <td><code>Getter.String</code></td>
+                        <td>Return language code from ISO string</td>
+                    </tr>
+                    <tr>
+                        <td>direction</td>
+                        <td><code>Getter.String</code></td>
+                        <td>Return direction (ltr|rtl) of the current language</td>
+                    </tr>
+                    <tr>
+                        <td>dictionary</td>
+                        <td><code>Getter.Object</code></td>
+                        <td>Return dictionary object</td>
+                    </tr>
+                    <tr>
+                        <td>get</td>
+                        <td><code>Function</code></td>
+                        <td>Used to return localized word</td>
+                    </tr>
+                    <tr>
+                        <td>observe</td>
+                        <td><code>Function.Observable</code></td>
+                        <td>Used to return the localized word and observe any changes on it</td>
+                    </tr>
+                    <tr>
+                        <td>set</td>
+                        <td><code>Function.Void</code></td>
+                        <td>Used to add word by word to dictionary</td>
+                    </tr>
+                    <tr>
+                        <td>setFromObject</td>
+                        <td><code>Function.Promise</code></td>
+                        <td>Used to add words to dictionary</td>
+                    </tr>
+                    <tr>
+                        <td>setFromFile</td>
+                        <td><code>Function.Promise</code></td>
+                        <td>Used to add words to dictionary</td>
+                    </tr>
+                    <tr>
+                        <td>clear</td>
+                        <td><code>Function.Void</code></td>
+                        <td>Used to clear dictionary storage and maped urls by loader class</td>
+                    </tr>
+                    <tr>
+                        <td>languageChanges</td>
+                        <td><code>Getter.Observable</code></td>
+                        <td>Used to observe language change</td>
+                    </tr>
+                    <tr>
+                        <td>dictionaryReady</td>
+                        <td><code>Getter.Observable</code></td>
+                        <td>Used to be notified when data are loaded, parsed and mapped in dictionary</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br>
     <br>
     <br>
     

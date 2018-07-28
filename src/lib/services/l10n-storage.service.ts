@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { IL10nDictionary } from './../helpers/helpers.class';
-import { Observable } from 'rxjs';
 
 
 export abstract class L10nBaseStorage {
