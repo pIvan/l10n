@@ -1,7 +1,7 @@
 import { TestBed, async, inject, fakeAsync, tick } from '@angular/core/testing';
 import { skip } from 'rxjs/operators';
 
-import { L10nModule, L10nService, LanguageCodes } from '@localization/l10n';
+import { L10nModule, L10nService, LanguageCodes } from '@iplab/ngx-l10n';
 import { L10nTestLoader, fileMock } from './l10n.service.mock';
 
 describe('L10n Service', () => {
@@ -22,7 +22,7 @@ describe('L10n Service', () => {
 
         service = TestBed.get(L10nService);
     }));
-    
+
     it('should be defined', async(() => {
         expect(service).toBeDefined();
         expect(service instanceof L10nService).toBe(true);
@@ -30,7 +30,7 @@ describe('L10n Service', () => {
 
     it('should load correct localization file', () => {
         spyOn(service, 'setFromFile');
-        let testUrl = 'locales/second-locale.properties';
+        const testUrl = 'locales/second-locale.properties';
 
         service.setFromFile( testUrl );
 
@@ -68,18 +68,18 @@ describe('L10n Service', () => {
     it('should return key as falback if key doesn\'t exist in dictionary', () => {
         service.setFromObject( fileMock );
 
-        let testString = service.get('localization.test.foo');
+        const testString = service.get('localization.test.foo');
         expect(testString).toEqual('localization.test.foo');
     });
 
     it('should return correct string from dictionary', fakeAsync((done) => {
         service.setFromFile( 'src/fileMock' );
-        let testString = service.get('localization.test.simple');
+        const testString = service.get('localization.test.simple');
         expect(testString).toEqual( fileMock['localization.test.simple'] );
     }));
 
     it('should return fallback sentence if the key is not in the dictionary', () => { 
-        let testString = service.get('localization.test.foo', null, 'fallback');
+        const testString = service.get('localization.test.foo', null, 'fallback');
         expect(testString).toEqual('fallback');
     });
 
@@ -87,19 +87,19 @@ describe('L10n Service', () => {
         service.setFromObject( fileMock );
         tick();
 
-        let dollarArgument = service.get('localization.test.interpolation.dollarArgument', { variable: 1 });
-        let singleBracketsArgument = service.get('localization.test.interpolation.singleBracketsArgument', { variable: 1 });
-        let doubleBracketsArgument = service.get('localization.test.interpolation.doubleBracketsArgument', { variable: 1 });
-        let arrayArgument = service.get('localization.test.interpolation.arrayArgument', [2, 3]);
-        let mixedMultipleArguments = service.get('localization.test.interpolation.mixedMultipleArguments', { variable1: 10, variable2: 20, variable3: 30 });
-        let keyAsArgument = service.get('localization.test.key.as.value');
+        const dollarArgument = service.get('localization.test.interpolation.dollarArgument', { variable: 1 });
+        const singleBracketsArgument = service.get('localization.test.interpolation.singleBracketsArgument', { variable: 1 });
+        const doubleBracketsArgument = service.get('localization.test.interpolation.doubleBracketsArgument', { variable: 1 });
+        const arrayArgument = service.get('localization.test.interpolation.arrayArgument', [2, 3]);
+        const mixedMultipleArguments = service.get('localization.test.interpolation.mixedMultipleArguments', { variable1: 10, variable2: 20, variable3: 30 });
+        const keyAsArgument = service.get('localization.test.key.as.value');
 
-        expect(dollarArgument).toEqual('@localization/l10n single brackets with dollar interpolation - 1.');
-        expect(singleBracketsArgument).toEqual('@localization/l10n single brackets interpolation - 1.');
-        expect(doubleBracketsArgument).toEqual('@localization/l10n double brackets interpolation - 1.');
-        expect(arrayArgument).toEqual('@localization/l10n array interpolation - 2.3.');
-        expect(mixedMultipleArguments).toEqual('@localization/l10n 10-20-30');
-        expect(keyAsArgument).toEqual('@localization/l10n is the best localization for Angular!');
+        expect(dollarArgument).toEqual('@iplab/ngx-l10n single brackets with dollar interpolation - 1.');
+        expect(singleBracketsArgument).toEqual('@iplab/ngx-l10n single brackets interpolation - 1.');
+        expect(doubleBracketsArgument).toEqual('@iplab/ngx-l10n double brackets interpolation - 1.');
+        expect(arrayArgument).toEqual('@iplab/ngx-l10n array interpolation - 2.3.');
+        expect(mixedMultipleArguments).toEqual('@iplab/ngx-l10n 10-20-30');
+        expect(keyAsArgument).toEqual('@iplab/ngx-l10n is the best localization for Angular!');
    }));
 
     it('should observe key on each change', (done) => {
@@ -107,7 +107,7 @@ describe('L10n Service', () => {
         service.observe( 'localization.test.interpolation.dollarArgument', {variable: '112'}).pipe(
             skip(1)
         ).subscribe((newValue) => {
-            expect( newValue ).toEqual("@localization/l10n single brackets with dollar interpolation - 112.");
+            expect( newValue ).toEqual("@iplab/ngx-l10n single brackets with dollar interpolation - 112.");
             done();
         });
 
@@ -115,9 +115,9 @@ describe('L10n Service', () => {
     });
 
     it('should manually set a translation value and notify observers about change', () => {
-        service.set('localization.test.manually', '@localization/l10n - manually set sentence.');
-        let sentence = service.get('localization.test.manually');
-        expect(sentence).toBe('@localization/l10n - manually set sentence.');
+        service.set('localization.test.manually', '@iplab/ngx-l10n - manually set sentence.');
+        const sentence = service.get('localization.test.manually');
+        expect(sentence).toBe('@iplab/ngx-l10n - manually set sentence.');
     });
 
 });

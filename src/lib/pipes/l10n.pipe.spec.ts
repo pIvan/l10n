@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { TestBed, async, inject, fakeAsync, tick, ComponentFixture } from '@angular/core/testing';
-import { L10nModule, L10nService, LanguageCodes } from '@localization/l10n';
+import { TestBed, async, ComponentFixture } from '@angular/core/testing';
+import { L10nModule, L10nService } from '@iplab/ngx-l10n';
 import { L10nTestLoader, fileMock } from './../services/l10n.service.mock';
 
 @Component({
@@ -16,7 +16,7 @@ import { L10nTestLoader, fileMock } from './../services/l10n.service.mock';
 })
 class L10nPipeTextComponent {
 
-    public objectAsArgument: { [key:string]: any } = { variable: 67 };
+    public objectAsArgument: { [key: string]: any } = { variable: 67 };
     public arrayAsArgument: Array<any> = ['@l10n', 2];
 
     constructor(localization: L10nService){
@@ -59,24 +59,24 @@ describe('L10n Pipe', () => {
     }));
 
     it(`should render simple translation`, async(() => {
-        let simpleExampleAttribute = componentEl.querySelector('#simpleExampleAttribute').textContent;
-        let simpleExampleProperty = componentEl.querySelector('#simpleExampleProperty').textContent;
+        const simpleExampleAttribute = componentEl.querySelector('#simpleExampleAttribute').textContent;
+        const simpleExampleProperty = componentEl.querySelector('#simpleExampleProperty').textContent;
         expect(simpleExampleAttribute).toEqual(fileMock['localization.test.simple']);
         expect(simpleExampleProperty).toEqual(fileMock['localization.test.simple']);
     }));
 
     it(`should render translation with bind arguments`, async(() => {
-        let withObjectAsArgument = componentEl.querySelector('#withObjectAsArgument').textContent;
-        let withArrayAsArgument = componentEl.querySelector('#withArrayAsArgument').textContent;
-        expect(withObjectAsArgument).toEqual('@localization/l10n single brackets with dollar interpolation - 67.');
-        expect(withArrayAsArgument).toEqual('@localization/l10n array interpolation - @l10n.2.');
+        const withObjectAsArgument = componentEl.querySelector('#withObjectAsArgument').textContent;
+        const withArrayAsArgument = componentEl.querySelector('#withArrayAsArgument').textContent;
+        expect(withObjectAsArgument).toEqual('@iplab/ngx-l10n single brackets with dollar interpolation - 67.');
+        expect(withArrayAsArgument).toEqual('@iplab/ngx-l10n array interpolation - @l10n.2.');
     }));
 
     it(`should render translation with JSON arguments`, async(() => {
-        let withJSONAsArgumentAttribute = componentEl.querySelector('#withJSONAsArgumentAttribute').textContent;
-        let withJSONAsArgumentProperty = componentEl.querySelector('#withJSONAsArgumentProperty').textContent;
-        expect(withJSONAsArgumentAttribute).toEqual('@localization/l10n single brackets with dollar interpolation - 66.');
-        expect(withJSONAsArgumentProperty).toEqual('@localization/l10n single brackets with dollar interpolation - 11.');
+        const withJSONAsArgumentAttribute = componentEl.querySelector('#withJSONAsArgumentAttribute').textContent;
+        const withJSONAsArgumentProperty = componentEl.querySelector('#withJSONAsArgumentProperty').textContent;
+        expect(withJSONAsArgumentAttribute).toEqual('@iplab/ngx-l10n single brackets with dollar interpolation - 66.');
+        expect(withJSONAsArgumentProperty).toEqual('@iplab/ngx-l10n single brackets with dollar interpolation - 11.');
     }));
 
 });

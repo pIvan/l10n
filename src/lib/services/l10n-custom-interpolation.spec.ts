@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TestBed, async, inject, fakeAsync, tick } from '@angular/core/testing';
-import { L10nModule, L10nService, L10nBaseFormatter, defineInterpolation, L10nBaseStorage, IL10nArguments } from '@localization/l10n';
+import { L10nModule, L10nService, L10nBaseFormatter, defineInterpolation, L10nBaseStorage, IL10nArguments } from '@iplab/ngx-l10n';
 import { IsNullOrEmpty } from './../helpers/helpers.class';
 import { L10nTestLoader, fileMock } from './l10n.service.mock';
 
@@ -64,14 +64,14 @@ describe('L10n Config', () => {
         service.setFromObject( fileMock );
         tick();
         let customInterpolation = service.get('localization.test.interpolation.customInterpolation', {variable:3});
-        expect(customInterpolation).toEqual('@localization/l10n custom interpolation - 3.');
+        expect(customInterpolation).toEqual('@iplab/ngx-l10n custom interpolation - 3.');
     }));
 
    it('should insert correct arguments with custom interpolation ([[value]])', fakeAsync(() => {
         service.setFromObject( fileMock );
         tick();
         let customArrayInterpolation = service.get('localization.test.interpolation.customArrayInterpolation', [12]);
-        expect(customArrayInterpolation).toEqual('@localization/l10n custom array interpolation - 12.');
+        expect(customArrayInterpolation).toEqual('@iplab/ngx-l10n custom array interpolation - 12.');
     }));
 
 });

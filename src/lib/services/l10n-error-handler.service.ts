@@ -12,8 +12,7 @@ export class L10nErrorHandler extends L10nBaseErrorHandler {
 
         if (error instanceof Response) {
             errMsg = `Lokalization could not find ${error.url} - status: ${error.status} - ${error.statusText || ''}`;
-        } 
-        else if(typeof error == 'string') {
+        } else if (typeof error === 'string') {
             errMsg = error;
         }
 

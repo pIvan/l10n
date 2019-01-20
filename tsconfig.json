@@ -13,15 +13,16 @@
       "node_modules/@types"
     ],
     "lib": [
-      "es2015",
+      "es2017",
       "dom"
     ],
     "paths": {
-      "@localization/l10n": [ "lib/public_api" ]
+      "@iplab/ngx-l10n": [ "lib/public_api" ]
     }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
-    "enableIvy": true
+    "enableIvy": false,
+    "strictMetadataEmit": false
   }
 }

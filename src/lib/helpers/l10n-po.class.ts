@@ -21,9 +21,9 @@ export class L10nPo {
      * parse the *.po file into an associative array
      */
     public parse(rawText: string): Observable<{ key: string; sentence: string }> {
-        let entries = rawText
-            .replace(this.blank, '')
-            .split(this.newLines);
+        const entries = rawText
+                        .replace(this.blank, '')
+                        .split(this.newLines);
 
         return Observable.create((observer: Observer<{ key: string; sentence: string }>) => {
             let itemKey = null;
@@ -35,7 +35,7 @@ export class L10nPo {
                     return;
                 }
 
-                let line = entries.shift();
+                const line = entries.shift();
 
                 if (line.match(/^msgid/)) { // key
                     itemKey = this.extract(line);

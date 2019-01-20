@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable, BehaviorSubject, of } from 'rxjs';
-import { map, catchError, tap, flatMap, finalize } from 'rxjs/operators';
+import { map, catchError, tap, flatMap, finalize, filter, switchMap, distinctUntilChanged, startWith } from 'rxjs/operators';
 import { L10nBaseLoader } from './l10n-loader.service';
 import { L10nBaseStorage } from './l10n-storage.service';
 import { L10nBaseParser } from './l10n-parser.service';
@@ -33,7 +33,7 @@ export class L10nService {
     /**
      * observers for each key in dictionary
      */
-    private _observers: { [key: string]: BehaviorSubject<string> } = {};
+    private observers: Subject<string> = new Subject();
 
     private _languageChange: Subject<IL10nLanguage> = new Subject();
 
@@ -74,6 +74,9 @@ export class L10nService {
      * and notify subscribers about change
      */
     public set language(language: string) {
+        if (IsNullOrEmpty(language)) {
+            throw new Error(`The language must be set!`);
+        }
         this._language = language;
         this._languageCode = language.split('-', 1)[0].toLowerCase();
 
@@ -99,7 +102,7 @@ export class L10nService {
 
     /**
      * get direction (ltr|rtl) of the current language
-     * 
+     *
      * @example:
      * <html dir="ltr">
      *  ...
@@ -108,8 +111,8 @@ export class L10nService {
     public get direction(): string {
         // http://www.w3.org/International/questions/qa-scripts
         // Arabic, Hebrew, Farsi, Pashto, Urdu
-        let rtlList = ['ar', 'he', 'fa', 'ps', 'ur'];
-        return (rtlList.indexOf(this._languageCode) != -1) ? 'rtl' : 'ltr';
+        const rtlList = ['ar', 'he', 'fa', 'ps', 'ur'];
+        return (rtlList.indexOf(this._languageCode) !== -1) ? 'rtl' : 'ltr';
     }
 
     /**
@@ -123,7 +126,7 @@ export class L10nService {
      * in dictionary find value by key and translate it
      * @example
      * dictionary = {
-     *  l10n.lang.key1: 'L10n v{{version}} (build: {{build}})', 
+     *  l10n.lang.key1: 'L10n v{{version}} (build: {{build}})',
      *  l10n.lang.key2: 'L10n v{{0}} (build: {{1}})',
      *  l10n.lang.key3: 'L10n v{version} (build: {build})',
      *  l10n.lang.key4: 'L10n v{0} (build: {1})',
@@ -136,28 +139,28 @@ export class L10nService {
      *
      * example 1:
      * l10n.get('l10n.lang.key1', { version: 1.61.00.1, build: 600124 }); =>  L10n v1.61.00.1 (build: 600124)
-     * 
+     *
      * example 2:
  	 * l10n.get('l10n.lang.key2', [1.61.00.1, 600124]); =>  L10n v1.61.00.1 (build: 600124)
      *
      * example 3:
      * l10n.get('l10n.lang.key3', { version: 1.61.00.1, build: 600124 }); =>  L10n v1.61.00.1 (build: 600124)
-     * 
+     *
      * example 4:
      * l10n.get('l10n.lang.key4', [1.61.00.1, 600124]); =>  L10n v1.61.00.1 (build: 600124)
-     * 
+     *
      * example 5:
      * l10n.get('l10n.lang.key5', { version: 1.61.00.1, build: 600124 }); =>  L10n v1.61.00.1 (build: 600124)
-     * 
+     *
      * example 6:
      * l10n.get('l10n.lang.key6', [1.61.00.1, 600124]); =>  L10n v1.61.00.1 (build: 600124)
-     * 
+     *
      * example 7:
      * l10n.get('l10n.lang.key7'); => l10n.lang.key7
      *
      * example 8:
      * l10n.get('l10n.lang.key7', null, 'Return this if you can't find key in dictionary'); => Return this if you can't find key in dictionary
-     * 
+     *
      * example 9:
      * l10n.get('l10n.lang.key10'); => L10n is the best localization for Angular
      */
@@ -169,12 +172,18 @@ export class L10nService {
      * observe key change in dictionary and return translation
      */
     public observe(key: string, args?: IL10nArguments | string, fallbackString?: string): Observable<string> {
-        if (!this._observers[key]) {
-            this._observers[key] = new BehaviorSubject(key);
-        }
+        const observer = new BehaviorSubject(null);
 
-        return this._observers[key]
-            .pipe(map(() => this.fromDictionary(key, args, fallbackString)));
+        return observer.pipe(
+            switchMap(
+                () => this.observers.pipe(
+                    startWith(key),
+                    filter((value) => value === key || value === null),
+                    catchError((error) => of(this._errorHandler.handleError(error))),
+                    map(() => this.fromDictionary(key, args, fallbackString))
+                )
+            )
+        );
     }
 
     /**
@@ -190,7 +199,7 @@ export class L10nService {
      */
     private fromDictionary(key: string, args: IL10nArguments | string, fallback?: string): string {
         let sentence = this._storage.getSentance(key);
-        let interpolateArguments = this.prepareArguments(args);
+        const interpolateArguments = this.prepareArguments(args);
 
         if (sentence) {
             sentence = this.evaluate(sentence, interpolateArguments);
@@ -202,18 +211,17 @@ export class L10nService {
     /**
      * prepare arguments to use them in translation
      * accepted Object, Array or JSON object writen in template
-     * param {Object|Array|String} args 
+     * param {Object|Array|String} args
      */
     private prepareArguments(args: any): IL10nArguments {
         // we should accept JSON object writen in template
-        if (typeof args == 'string' && !IsNullOrEmpty(args)) {
-            let validArgs: string = args.replace(/(\')?([a-zA-Z0-9_]+)(\')?(\s)?:/g, '"$2":')
-                .replace(/:(\s)?(\')(.*?)(\')/g, ':"$3"');
+        if (typeof args === 'string' && !IsNullOrEmpty(args)) {
+            const validArgs: string = args.replace(/(\')?([a-zA-Z0-9_]+)(\')?(\s)?:/g, '"$2":')
+                                        .replace(/:(\s)?(\')(.*?)(\')/g, ':"$3"');
 
             try {
                 return JSON.parse(validArgs);
-            }
-            catch (e) {
+            } catch (e) {
                 this._errorHandler.handleError(`Wrong parameter. Expected a valid Object or Array, received: ${args}`);
             }
         }
@@ -224,7 +232,7 @@ export class L10nService {
     /**
      * replace expressions with values
      * all value holders should be replaced with values and return prepared string
-     * 
+     *
      * known interpolations
      * {{}} | {} | ${}
      */
@@ -233,8 +241,7 @@ export class L10nService {
     }
 
     /**
-     * @description 
-     * check given values and if there is no sentence 
+     * check given values and if there is no sentence
      * return fallback string, otherwise return given key value
      */
     private fallbackCheck(sentence: string, fallback: string, key: string): string {
@@ -258,17 +265,14 @@ export class L10nService {
             return this._errorHandler.handleError(`To manually set translation you need to define key and sentence!`);
         }
 
-        let oldVal = this._storage.getSentance(key);
-        let newVal = this.evalString(value);
+        const oldVal = this._storage.getSentance(key);
+        const newVal = this.evalString(value);
 
         // if old value has beed changed
         // or if it was undefined then we need to trigger change on this key
         if (newVal !== oldVal) {
             this._storage.setSentence(key, newVal);
-
-            if (this._observers[key]) {
-                this._observers[key].next(key);
-            }
+            this.observers.next(key);
         }
     }
 
@@ -276,8 +280,9 @@ export class L10nService {
      * handle escaped characters (backslashes) in a string
      */
     private evalString(text: string): string {
-        if (text.lastIndexOf('\\') < 0)
+        if (text.lastIndexOf('\\') < 0) {
             return text;
+        }
 
         return text.replace(/\\\\/g, '\\')
             .replace(/\\n/g, '\n')
@@ -292,15 +297,15 @@ export class L10nService {
     }
 
     /**
-     * used only in browsers, 
+     * used only in browsers,
      * try to manually get default language
      */
     private get navigatorLang(): string {
-        if (typeof window == null && typeof window.navigator == null) {
+        if (window == null && window.navigator == null) {
             return null;
         }
 
-        let navigator = window.navigator;
+        const navigator = window.navigator;
 
         return navigator ?
             navigator.language ||
@@ -329,7 +334,7 @@ export class L10nService {
      * set localization from JavaScript object
      * it's merged with previous one unless otherwise is defined
      */
-    public setFromObject(translations: { [key: string]: string }, shouldMerge: boolean = true): Promise<void | {}> {
+    public setFromObject(translations: { [key: string]: string }, shouldMerge: boolean = true): Promise<void> {
         if (shouldMerge !== true) {
             this.clear();
         }
@@ -345,7 +350,7 @@ export class L10nService {
      * each response is merged with previous one
      * unless otherwise is defined
      */
-    public setFromFile(url: string, shouldMerge: boolean = true): Promise<void | {}> {
+    public setFromFile(url: string, shouldMerge: boolean = true): Promise<void> {
         if (shouldMerge !== true) {
             this.clear();
         }
@@ -354,10 +359,8 @@ export class L10nService {
         return this._loader
             .setFromFile({ url, language: this._language, code: this._languageCode, direction: this.direction })
             .pipe(
-                flatMap(({ response, fileType }) => {
-                    loading = false;
-                    return this.parse(response, fileType);
-                }),
+                tap(() => loading = false),
+                flatMap(({ response, fileType }) => this.parse(response, fileType)),
                 catchError((error: Response) => of(this._errorHandler.handleError(error))),
                 finalize(() => loading && this.forceChange())
             ).toPromise();
@@ -366,14 +369,14 @@ export class L10nService {
     /**
      * parse data and set to dictionary
      */
-    private parse(data: any, fileType: string): Promise<void | {}> {
+    private parse(data: any, fileType: string): Promise<void> {
         return this._parser
             .parse(data, fileType)
             .pipe(
                 tap(({ key, sentence }) => this.addToDictionary(key, sentence)),
                 catchError((error) => of(this._errorHandler.handleError(error))),
                 finalize(() => this._dictionaryReady.next())
-            ).toPromise();
+            ).toPromise() as Promise<void>;
     }
 
     /**
@@ -381,6 +384,6 @@ export class L10nService {
      * trigger change on each observer
      */
     private forceChange(): void {
-        Object.keys(this._observers).forEach((key) => this._observers[key].next(key));
+        this.observers.next(null);
     }
 }

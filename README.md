@@ -1,11 +1,11 @@
-# @localization/l10n
+# @iplab/ngx-l10n
 > Pure Angular localization (l10n) library.
 
 
 
-[![npm version](https://badge.fury.io/js/%40localization%2Fl10n.svg)](https://www.npmjs.com/package/@localization/l10n)
+[![npm version](https://badge.fury.io/js/%40iplab%2Fngx-l10n.svg)](https://www.npmjs.com/package/@iplab/ngx-l10n)
 [![Build Status](https://travis-ci.org/pIvan/l10n.svg?branch=master)](https://travis-ci.org/pIvan/l10n)
-[![Known Vulnerabilities](https://snyk.io/test/npm/@localization/l10n/badge.svg)](https://snyk.io/test/npm/@localization/l10n)
+[![Known Vulnerabilities](https://snyk.io/test/npm/@iplab/ngx-l10n/badge.svg)](https://snyk.io/test/npm/@iplab/ngx-l10n)
 
 # Demo
 
@@ -35,12 +35,12 @@
 
 
 ```shell
-npm install @localization/l10n
+npm install @iplab/ngx-l10n
 ```
 
 Use the following snippet inside your app module: 
 ```shell
-import { L10nModule, L10nService, LanguageCodes } from '@localization/l10n';
+import { L10nModule, L10nService, LanguageCodes } from '@iplab/ngx-l10n';
 ...
 ...
 
@@ -74,7 +74,7 @@ export class AppModule {}
 
 Use the following snippet inside your component: 
 ```shell
-import { L10nService } from '@localization/l10n';
+import { L10nService } from '@iplab/ngx-l10n';
 
 
 @Component({
@@ -104,12 +104,12 @@ Use the following snippet inside your template:
 
 ## NativeScript
 ```shell
-tns plugin add @localization/l10n
+tns plugin add @iplab/ngx-l10n
 ```
 
 Use the following snippet inside your app module: 
 ```shell
-import { L10nModule, L10nService, L10nBaseLoader } from '@localization/l10n';
+import { L10nModule, L10nService, L10nBaseLoader } from '@iplab/ngx-l10n';
 import { knownFolders } from "file-system";
 import { Subject, Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';

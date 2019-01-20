@@ -10,7 +10,7 @@ export class L10nJSON {
             translations = JSON.parse(translations);
         }
 
-        let entries = Object.keys(translations);
+        const entries = Object.keys(translations);
 
         return Observable.create((observer: Observer<{ key: string; sentence: string }>) => {
             while (true) {
@@ -19,7 +19,7 @@ export class L10nJSON {
                     return;
                 }
 
-                let key = entries.shift();
+                const key = entries.shift();
                 observer.next({ key: key, sentence: translations[key] });
             }
         });

@@ -13,10 +13,10 @@ import { IL10nArguments } from './../helpers/helpers.class';
 export class L10nDirective implements OnInit, OnDestroy, OnChanges {
 
     @Input('l10n')
-    private localizationKey: string;
+    public localizationKey: string;
 
     @Input('l10n-args')
-    private localizationParams: IL10nArguments | string;
+    public localizationParams: IL10nArguments | string;
 
     private subscription: Subscription;
 
@@ -40,7 +40,7 @@ export class L10nDirective implements OnInit, OnDestroy, OnChanges {
 
     public ngOnChanges(change: SimpleChanges): void {
         const params = change['localizationParams'];
-        if (params && params.currentValue && params.currentValue != params.previousValue) {
+        if (params && params.currentValue && params.currentValue !== params.previousValue) {
             this.localize(this.localizationKey, change['localizationParams'].currentValue);
         }
     }

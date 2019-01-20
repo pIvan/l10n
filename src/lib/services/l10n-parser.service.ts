@@ -20,16 +20,13 @@ export class L10nParser extends L10nBaseParser {
     private _json: L10nJSON = new L10nJSON();
 
     public parse(response: any, fileType: string): Observable<{ key: string; sentence: string }> {
-        if (fileType == 'properties') {
+        if (fileType === 'properties') {
             return this.parseProperties(response);
-        }
-        else if (fileType == 'po') {
+        } else if (fileType === 'po') {
             return this.parsePo(response);
-        }
-        else if (fileType == 'json') {
+        } else if (fileType === 'json') {
             return this.parseJSON(response);
-        }
-        else {
+        } else {
             throw Error(`Unknown file type`);
         }
     }

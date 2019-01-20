@@ -37,7 +37,7 @@ export class L10nFormatter extends L10nBaseFormatter {
             // try to find property in provided arguments
             if (!IsNullOrEmpty(args)) {
 
-                let value = args[this.trim(firstMatch)]
+                const value = args[this.trim(firstMatch)]
                             || args[this.trim(secondMatch)]
                             || args[this.trim(thirdMatch)];
 
@@ -45,11 +45,11 @@ export class L10nFormatter extends L10nBaseFormatter {
             }
 
             // try to find property in dictionary
-            let sentence = this._storage.getSentance(this.trim(firstMatch))
+            const sentenceD = this._storage.getSentance(this.trim(firstMatch))
                             || this._storage.getSentance(this.trim(secondMatch))
                             || this._storage.getSentance(this.trim(thirdMatch));
 
-            if (!IsNullOrEmpty(sentence)) { return sentence; }
+            if (!IsNullOrEmpty(sentenceD)) { return sentenceD; }
 
             return match;
         });

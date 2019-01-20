@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { L10nModule, LanguageCodes } from '@localization/l10n';
+import { L10nModule, LanguageCodes } from '@iplab/ngx-l10n';
 import { AppComponent } from './app.component';
 import { AppLocalizationResolve } from './app-resolve.service';
 import { AppLocalizationStorageService } from './app-localization-storage.service';

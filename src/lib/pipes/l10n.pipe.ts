@@ -7,14 +7,14 @@ import { IsNullOrEmpty } from './../helpers/helpers.class';
 /**
  * 
  * dictionary = {
- *  l10n.lang.key1: 'L10n v{{version}} (build: {{build}})', 
+ *  l10n.lang.key1: 'L10n v{{version}} (build: {{build}})',
  *  l10n.lang.key2: 'L10n v{{0}} (build: {{1}})',
  *  l10n.lang.key3: 'L10n v{version} (build: {build})',
  *  l10n.lang.key4: 'L10n v{0} (build: {1})',
  *  l10n.lang.key5: 'L10n v${version} (build: ${build})',
  *  l10n.lang.key6: 'L10n v${0} (build: ${1}),
  * };
- * 
+ *
  * Usage:
  *   localizationKey | l10n: arguments
  * Example:
@@ -41,12 +41,12 @@ export class L10nPipe implements PipeTransform, OnDestroy {
         this._dispose();
     }
 
-    public transform(key: string, args: any): string {
+    public transform(key: string, args?: any): string {
         if (IsNullOrEmpty(key)) {
             return key;
         }
 
-        if(!this.subscription){
+        if (!this.subscription) {
             this.subscription = this._l10n.observe(key, args).subscribe((sentence) => {
                 this.value = sentence;
                 this._ref.markForCheck();

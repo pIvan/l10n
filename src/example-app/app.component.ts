@@ -1,5 +1,5 @@
 import { Component, ElementRef, AfterViewInit } from '@angular/core';
-import { L10nService, LanguageCodes, IL10nDictionary } from '@localization/l10n';
+import { L10nService, LanguageCodes, IL10nDictionary } from '@iplab/ngx-l10n';
 import * as prettify from 'google-code-prettify/bin/prettify.min.js';
 
 

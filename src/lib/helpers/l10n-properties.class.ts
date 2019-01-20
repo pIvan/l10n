@@ -14,9 +14,9 @@ export class L10nProperties {
      * parse the *.properties file into an associative array
      */
     public parse(rawText: string): Observable<{ key: string; sentence: string }> {
-        let entries = rawText
-            .replace(this.blank, '')
-            .split(this.newLines);
+        const entries = rawText
+                            .replace(this.blank, '')
+                            .split(this.newLines);
 
         return Observable.create((observer: Observer<{ key: string; sentence: string }>) => {
 
@@ -27,14 +27,14 @@ export class L10nProperties {
                     return;
                 }
 
-                let line = entries.shift();
+                const line = entries.shift();
                 // comment or blank line?
                 if (this.comment.test(line)) {
                     continue;
                 }
 
-                let tmp = line.match(this.split);
-                if (tmp && tmp.length == 3) {
+                const tmp = line.match(this.split);
+                if (tmp && tmp.length === 3) {
                     observer.next({ key: tmp[1], sentence: tmp[2] });
                 }
             }

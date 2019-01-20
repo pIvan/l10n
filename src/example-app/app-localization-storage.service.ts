@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { L10nBaseStorage } from '@localization/l10n';
+import { L10nBaseStorage } from '@iplab/ngx-l10n';
 
 
 @Injectable()

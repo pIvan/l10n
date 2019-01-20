@@ -68,9 +68,6 @@ export function configFactory(userConfig: IL10nModuleConfig) {
 })
 export class L10nModule {
 
-  constructor(l10n: L10nService) {
-  }
-
   public static forRoot(configuration: IL10nModuleConfig = {}): ModuleWithProviders {
     return {
       ngModule: L10nModule,
@@ -84,4 +81,8 @@ export class L10nModule {
       ]
     }
   }
+
+  constructor(l10n: L10nService) {
+  }
+
 }

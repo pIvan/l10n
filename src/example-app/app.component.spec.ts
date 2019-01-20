@@ -1,7 +1,7 @@
 // import { TestBed, async } from '@angular/core/testing';
 
 // import { AppComponent } from './app.component';
-// import { L10nModule } from '@localization/l10n';
+// import { L10nModule } from '@iplab/ngx-l10n';
 
 
 // describe('AppComponent', () => {

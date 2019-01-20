@@ -20,7 +20,6 @@ export abstract class L10nBaseLoader {
     /**
      * @internal
      * try to get file extension from given url
-     * @param url 
      */
     protected getFileExtension(url: string): string {
         return url.split('.').pop();
